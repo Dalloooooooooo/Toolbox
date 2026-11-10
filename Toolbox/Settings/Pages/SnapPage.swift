@@ -8,6 +8,8 @@ struct SnapPage: View {
     @AppStorage(Pref.snapLinkedResize) private var linked = true
     @AppStorage(Pref.snapNearEdge) private var nearEdge = true
     @AppStorage(Pref.snapKeys) private var keys = true
+    @AppStorage(Pref.greenButtonMaximizes) private var greenButton = true
+    @AppStorage(Pref.snapAnimate) private var animate = true
     @State private var macOSTiling = MacOSTiling.isActive
     private let refresh = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
@@ -35,8 +37,14 @@ struct SnapPage: View {
                 Toggle("When I snap a window, suggest what to snap next to it", isOn: $assist)
                 Toggle("When I resize a snapped window, also resize adjacent snapped windows", isOn: $linked)
                 Toggle("Snap without dragging all the way to the screen edge", isOn: $nearEdge)
+                Toggle("Animate windows when they snap, maximize or restore", isOn: $animate)
             }
             .disabled(!enabled)
+            Section("Green button") {
+                Toggle("The green button maximizes the window instead of opening it in full screen", isOn: $greenButton)
+                Text("Like Windows' maximize button: the window fills the screen and stays on the same desktop, with the Dock and the menu bar visible. Click again to restore it. Full screen is still available with ⌃⌘F or from the menu that appears when you hover over the green button.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
             Section("Keyboard (left ⌥ acts as the Windows key)") {
                 Toggle("Win + arrow keys and Win + Z shortcuts", isOn: $keys)
                 Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 6) {

@@ -37,6 +37,7 @@ final class HotkeyTap {
         if type == .leftMouseDown || type == .leftMouseUp {
             if type == .leftMouseDown {
                 if AutoQuit.closeButtonDown(at: event.location) { return nil } // X on the last window → ⌘Q
+                if MaximizeButton.mouseDown(at: event.location, flags: event.flags) { return nil } // green = maximize
                 AutoQuit.actionStarted()
                 let p = event.location
                 MainActor.assumeIsolated { DockPreview.mouseDown(at: p) }
@@ -45,6 +46,7 @@ final class HotkeyTap {
             } else {
                 WindowSnap.shared.mouseUp()
                 if AutoQuit.consumeMouseUp() { return nil }
+                if MaximizeButton.consumeMouseUp() { return nil }
                 AutoQuit.actionEnded()
             }
             return DockClick.handle(type, at: event.location) ? nil : Unmanaged.passUnretained(event)

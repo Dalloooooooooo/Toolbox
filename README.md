@@ -22,7 +22,7 @@
 | | |
 |---|---|
 | **Switcher** | ⌘Tab (or the shortcut you prefer) shows **every window** with a live preview, like Alt+Tab — minimized and hidden ones and those on other desktops too. Close windows and apps with the X or with W/Q. |
-| **Window snapping** | Like Windows 11: drag to an edge for half the screen, to a corner for a quarter, to the top to fill it; a layout bar at the top of the screen, **Snap Assist** to fill the free space, and snapped windows that resize together. ⌥ + arrows and ⌥Z work like Win + arrows and Win+Z. |
+| **Window snapping** | Like Windows 11: drag to an edge for half the screen, to a corner for a quarter, to the top to fill it; the green button maximizes the window instead of opening it in full screen; a layout bar at the top of the screen, **Snap Assist** to fill the free space, and snapped windows that resize together. ⌥ + arrows and ⌥Z work like Win + arrows and Win+Z. |
 | **Dock** | Window previews when hovering Dock icons; clicking the icon of the frontmost app minimizes it, like the Windows taskbar. |
 | **Power** | A power button in the Dock: lock, sleep, turn off the display, restart, shut down, with a timer. |
 | **Quitting apps** | Closing the last window really quits the app (like ⌘Q, so apps that restore their tabs do), with exceptions for apps you want to keep running. |

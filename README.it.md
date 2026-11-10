@@ -22,7 +22,7 @@
 | | |
 |---|---|
 | **Switcher** | ⌘Tab (o la scorciatoia che preferisci) mostra **ogni finestra** con la sua anteprima, come Alt+Tab: anche quelle ridotte a icona, nascoste o su altre scrivanie. Con la X o con W/Q chiudi finestre e app. |
-| **Affianca finestre** | Come Windows 11: trascina sui bordi per la metà, negli angoli per un quarto, in alto per tutto schermo; barra dei layout in cima allo schermo, **Snap Assist** per riempire lo spazio libero, finestre affiancate che si ridimensionano insieme. ⌥ + frecce e ⌥Z come Win + frecce e Win+Z. |
+| **Affianca finestre** | Come Windows 11: trascina sui bordi per la metà, negli angoli per un quarto, in alto per tutto schermo; il pulsante verde ingrandisce la finestra invece di aprirla a schermo intero; barra dei layout in cima allo schermo, **Snap Assist** per riempire lo spazio libero, finestre affiancate che si ridimensionano insieme. ⌥ + frecce e ⌥Z come Win + frecce e Win+Z. |
 | **Dock** | Anteprime delle finestre passando sopra le icone; un clic sull'icona dell'app in primo piano la riduce a icona, come sulla barra delle applicazioni. |
 | **Power** | Un tasto di accensione nel Dock: blocca, standby, spegni lo schermo, riavvia, spegni, con timer. |
 | **Chiusura app** | Chiudendo l'ultima finestra l'app esce davvero (come ⌘Q, quindi le app che ripristinano le schede lo fanno), con un elenco di eccezioni per le app da tenere aperte. |

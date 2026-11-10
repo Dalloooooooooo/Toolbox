@@ -9,4 +9,6 @@ enum SnapSettings {
     static var layoutBar: Bool { flag(Pref.snapLayoutBar) }
     static var nearEdge: Bool { flag(Pref.snapNearEdge) }
     static var keys: Bool { flag(Pref.snapKeys) }
+    static var greenButton: Bool { flag(Pref.greenButtonMaximizes) }
+    static var animate: Bool { flag(Pref.snapAnimate) }
 }

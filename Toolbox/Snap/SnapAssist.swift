@@ -20,6 +20,7 @@ final class SnapAssist: ObservableObject {
     private var zone: SnapZone = .right
     private var area: CGRect = .zero
     private var used: Set<CGWindowID> = []
+    private var replacing = false // offering zones that are already taken
     private var quietUntil = Date.distantPast // activations we cause ourselves don't close Snap Assist
 
     var isVisible: Bool { panel?.isVisible == true }
@@ -41,6 +42,10 @@ final class SnapAssist: ObservableObject {
         let n = layout.zones.count
         let order = (1..<max(1, n)).map { layout.zones[(placed + $0) % n] }
         pending = order.filter { isFree($0, ignoring: id) }
+        // the other zones are all taken (e.g. a window snapped next to one already snapped): ask anyway,
+        // to replace what's there; clicking elsewhere or Esc leaves everything as it is
+        replacing = pending.isEmpty
+        if replacing { pending = order }
         quietUntil = Date().addingTimeInterval(0.6)
         next()
     }
@@ -58,10 +63,11 @@ final class SnapAssist: ObservableObject {
     private func next() {
         guard let z = pending.first else { dismiss(); return }
         pending.removeFirst()
-        guard isFree(z, ignoring: 0) else { next(); return }
+        guard replacing || isFree(z, ignoring: 0) else { next(); return }
         zone = z
         // windows already snapped in the layout are not offered again
         let placedHere = Set(WindowSnap.shared.snapped.keys.filter { WindowSnap.shared.inPlace($0)?.area == area })
+        // (including the one in this very zone: choosing it would change nothing)
         let list = WindowManager.listWindows()
             .filter { !used.contains($0.id) && !placedHere.contains($0.id) }
             .filter { $0.state == .normal || $0.state == .minimized || $0.state == .hidden }

@@ -19,6 +19,8 @@ enum Pref {
     static let snapLayoutBar = "snapLayoutBar"
     static let snapNearEdge = "snapNearEdge"
     static let snapKeys = "snapKeys"
+    static let greenButtonMaximizes = "greenButtonMaximizes"
+    static let snapAnimate = "snapAnimate"
     static let macTilingBackup = "macTilingBackup"   // how macOS tiling was set up before Toolbox
 
     // Dock
