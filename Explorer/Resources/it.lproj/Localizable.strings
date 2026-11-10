@@ -1,0 +1,126 @@
+/* File Explorer: Italian localization */
+
+/* Main menu (ExplorerApp.swift) */
+"File Explorer" = "Esplora file";
+"About File Explorer" = "Informazioni su Esplora file";
+"Hide File Explorer" = "Nascondi Esplora file";
+"Quit File Explorer" = "Esci da Esplora file";
+"File" = "File";
+"New Window" = "Nuova finestra";
+"New Tab" = "Nuova scheda";
+"New Folder" = "Nuova cartella";
+"New Text Document" = "Nuovo documento di testo";
+"Close" = "Chiudi";
+"Edit" = "Modifica";
+"Undo" = "Annulla";
+"Redo" = "Ripeti";
+"Cut" = "Taglia";
+"Copy" = "Copia";
+"Paste" = "Incolla";
+"Select All" = "Seleziona tutto";
+"View" = "Vista";
+"Details" = "Dettagli";
+"Large Icons" = "Icone grandi";
+"Details Pane" = "Riquadro dettagli";
+"Hidden Items" = "Elementi nascosti";
+"Back" = "Indietro";
+"Forward" = "Avanti";
+"Parent Folder" = "Cartella superiore";
+"Home" = "Inizio";
+"Go" = "Vai";
+"Window" = "Finestra";
+"Minimize" = "Riduci a icona";
+"Zoom" = "Ingrandisci";
+
+/* Model: errors, alerts, new item names */
+"You don't have permission to open this folder." = "Non hai il permesso di aprire questa cartella.";
+"%@: can't put a folder inside itself" = "%@: non si può mettere una cartella dentro sé stessa";
+"Permanently delete \"%@\"?" = "Eliminare definitivamente \"%@\"?";
+"Permanently delete %lld items?" = "Eliminare definitivamente %lld elementi?";
+"They won't be moved to the Trash and can't be recovered." = "Non passeranno dal Cestino e non si potranno recuperare.";
+"Delete" = "Elimina";
+"Cancel" = "Annulla";
+"The name can't contain \"/\"." = "Il nome non può contenere \"/\".";
+"An item named \"%@\" already exists." = "Esiste già un elemento chiamato \"%@\".";
+"New Text Document.txt" = "Nuovo documento di testo.txt";
+"Couldn't create the file here." = "Non è stato possibile creare il file qui.";
+"Folder" = "Cartella";
+"%@ - Copy" = "%@ - Copia";
+"%@ - Copy (%lld)" = "%@ - Copia (%lld)";
+"Archive" = "Archivio";
+"Compression failed" = "Compressione non riuscita";
+"Extraction failed" = "Estrazione non riuscita";
+"%@ bytes" = "%@ byte";
+
+/* Command bar */
+"Text Document" = "Documento di testo";
+"New" = "Nuovo";
+"Cut (⌘X)" = "Taglia (⌘X)";
+"Copy (⌘C)" = "Copia (⌘C)";
+"Paste (⌘V)" = "Incolla (⌘V)";
+"Rename (F2)" = "Rinomina (F2)";
+"Share" = "Condividi";
+"Move to Trash (⌦)" = "Sposta nel Cestino (Canc)";
+"Sort By" = "Ordina per";
+"Name" = "Nome";
+"Date Modified" = "Ultima modifica";
+"Type" = "Tipo";
+"Size" = "Dimensione";
+"Date Created" = "Data creazione";
+"Descending" = "Decrescente";
+"Sort" = "Ordina";
+"Calculate Folder Sizes" = "Calcola la dimensione delle cartelle";
+"Search subfolders too" = "Cerca anche nelle sottocartelle";
+
+/* Context menus */
+"Open" = "Apri";
+"Open With" = "Apri con";
+"Open in New Window" = "Apri in una nuova finestra";
+"Open in Terminal" = "Apri nel Terminale";
+"Paste Into Folder" = "Incolla qui dentro";
+"Duplicate" = "Duplica";
+"Rename" = "Rinomina";
+"Compress to ZIP File" = "Comprimi in un file ZIP";
+"Extract Here" = "Estrai qui";
+"Set as Wallpaper" = "Imposta come sfondo";
+"Copy Path" = "Copia percorso";
+"Show in Finder" = "Mostra nel Finder";
+"Share…" = "Condividi…";
+"Move to Trash" = "Sposta nel Cestino";
+"Properties" = "Proprietà";
+"Refresh" = "Aggiorna";
+"Show Hidden Items" = "Mostra elementi nascosti";
+
+/* Details pane and table */
+"%lld items selected" = "%lld elementi selezionati";
+"Total Size" = "Dimensione totale";
+"calculating…" = "calcolo…";
+"Items" = "Elementi";
+"Path" = "Percorso";
+"Select a file to see its preview and details. Press Space for a full-screen preview." = "Seleziona un file per vederne l'anteprima e i dettagli. Premi Spazio per l'anteprima a tutto schermo.";
+"Contains" = "Contiene";
+"%lld items" = "%lld elementi";
+"Resolution" = "Risoluzione";
+"%lld × %lld pixels" = "%lld × %lld pixel";
+"Extension" = "Estensione";
+
+/* Main window */
+"Operation failed" = "Operazione non riuscita";
+"OK" = "OK";
+
+/* Navigation bar */
+"Back (⌥←)" = "Indietro (⌥←)";
+"Forward (⌥→)" = "Avanti (⌥→)";
+"Parent Folder (⌥↑)" = "Cartella superiore (⌥↑)";
+"Refresh (F5)" = "Aggiorna (F5)";
+"Search %@" = "Cerca in %@";
+"Can't find \"%@\". Check the path and try again." = "Impossibile trovare \"%@\". Controlla il percorso e riprova.";
+
+/* Sidebar */
+"Quick Access" = "Accesso rapido";
+"This Mac" = "Questo Mac";
+"%@ free of %@" = "%@ liberi di %@";
+
+/* Status bar */
+"%lld selected" = "%lld selezionati";
+"%@ free" = "%@ liberi";
