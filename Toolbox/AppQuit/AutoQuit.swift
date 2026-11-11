@@ -21,6 +21,9 @@ enum AutoQuit {
         if sync { snapshot = (pid, windowCount(pid)) } else { DispatchQueue.main.async { snapshot = (pid, windowCount(pid)) } }
     }
 
+    /// Forget the action in progress (it wasn't one that closes windows).
+    static func cancel() { snapshot = nil }
+
     /// Call at the end of the action (mouseUp, or right after ⌘W).
     static func actionEnded() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {

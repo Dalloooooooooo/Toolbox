@@ -7,6 +7,7 @@ struct KeyboardPage: View {
     @AppStorage(Pref.textKeys) private var textKeys = true
     @AppStorage(Pref.rightCommandAltGr) private var rightCommandAltGr = true
     @AppStorage(Pref.screenSnip) private var screenSnip = true
+    @AppStorage(Pref.capsLockAccents) private var capsLockAccents = true
     @State private var current = KeyboardLayout.current
     @State private var enabled = KeyboardLayout.enabled
 
@@ -47,7 +48,11 @@ struct KeyboardPage: View {
             }
 
             Section("Screen snipping") {
-                Toggle("⌥ + Shift + S captures part of the screen (like Win + Shift + S)", isOn: $screenSnip)
+                HStack {
+                    Toggle("Capture part of the screen (like Win + Shift + S)", isOn: $screenSnip)
+                    Spacer()
+                    ShortcutField(pref: Pref.screenSnipShortcut, default: .defaultScreenSnip).disabled(!screenSnip)
+                }
                 Text("Drag to choose the area; press Space to capture a whole window, Esc to cancel. The screenshot goes to the clipboard (paste it with Ctrl+V) and is saved in Pictures → Screenshots. Click the notification to open it and draw on it.")
                     .font(.callout).foregroundStyle(.secondary)
                 Button("Open the Screenshots folder") { ScreenSnip.openFolder() }
@@ -60,6 +65,16 @@ struct KeyboardPage: View {
                         .foregroundStyle(rightCommandAltGr ? .primary : .secondary)
                 }
                 Text("On a Mac keyboard, right ⌘ sits where AltGr is on Windows. ⌥ (Option), both left and right, types the same characters too. Left ⌘ stays ⌘ for shortcuts.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
+
+            Section("Caps Lock") {
+                Toggle("Caps Lock also capitalizes accented letters", isOn: $capsLockAccents)
+                ForEach(CapsLockAccents.rows, id: \.0) { keys, result in
+                    LabeledContent { Text(result).monospaced() } label: { Text(keys).monospaced() }
+                        .foregroundStyle(capsLockAccents ? .primary : .secondary)
+                }
+                Text("On a Mac, Caps Lock leaves è, ò, à, ù and ì lowercase. With this on, they become capitals like the other letters.")
                     .font(.callout).foregroundStyle(.secondary)
             }
 

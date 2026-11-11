@@ -4,7 +4,7 @@ import SwiftUI
 /// The settings pages, in the order they appear in the sidebar.
 /// To add a page: a new case here, its label, its icon (SF Symbols) and its view in `page`.
 enum SettingsSection: String, CaseIterable, Identifiable, Hashable {
-    case switcher, snap, dock, power, apps, finder, keyboard, notifications, general, updates
+    case switcher, snap, zones, desktop, dock, power, apps, finder, keyboard, notifications, general, updates
     var id: String { rawValue }
 
     /// The pages at the top of the sidebar.
@@ -16,6 +16,8 @@ enum SettingsSection: String, CaseIterable, Identifiable, Hashable {
         switch self {
         case .switcher: String(localized: "Switcher")
         case .snap: String(localized: "Window Snapping")
+        case .zones: String(localized: "Zones")
+        case .desktop: String(localized: "Desktop")
         case .dock: String(localized: "Dock")
         case .power: "Power"
         case .apps: String(localized: "Quitting Apps")
@@ -31,6 +33,8 @@ enum SettingsSection: String, CaseIterable, Identifiable, Hashable {
         switch self {
         case .switcher: "rectangle.on.rectangle"
         case .snap: "rectangle.split.2x1"
+        case .zones: "" // drawn: see `image`
+        case .desktop: "hand.wave"
         case .dock: "dock.rectangle"
         case .power: "power"
         case .apps: "xmark.app"
@@ -42,10 +46,20 @@ enum SettingsSection: String, CaseIterable, Identifiable, Hashable {
         }
     }
 
+    /// The sidebar icon: an SF Symbol, or a drawing for pages that don't have a fitting one.
+    var image: Image {
+        switch self {
+        case .zones: Image(nsImage: ZonesIcon.image).renderingMode(.template)
+        default: Image(systemName: icon)
+        }
+    }
+
     @ViewBuilder var page: some View {
         switch self {
         case .switcher: SwitcherPage()
         case .snap: SnapPage()
+        case .zones: ZonesPage()
+        case .desktop: DesktopPage()
         case .dock: DockPage()
         case .power: PowerPage()
         case .apps: AppsPage()
@@ -108,7 +122,7 @@ private struct Sidebar: View {
 
     private func row(_ item: SettingsSection) -> some View {
         HStack {
-            Label(item.label, systemImage: item.icon)
+            Label { Text(item.label) } icon: { item.image }
             Spacer()
             if item == .updates && updateAvailable { Circle().fill(.blue).frame(width: 8, height: 8) }
         }

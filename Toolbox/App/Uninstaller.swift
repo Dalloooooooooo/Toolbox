@@ -32,6 +32,7 @@ enum Uninstaller {
         for key in [Pref.snapEnabled, Pref.toolboxInDock, Pref.powerButton] { d.set(false, forKey: key) }
         // 1. whatever Toolbox changed in the system goes back to how it was
         MacOSTiling.restore()
+        MinimizeIntoAppIcon.restore()
         if FinderPrefs.hasBackup { FinderPrefs.restoreOriginal() }
         SystemHotkeys.restoreAll()
         try? SMAppService.mainApp.unregister()

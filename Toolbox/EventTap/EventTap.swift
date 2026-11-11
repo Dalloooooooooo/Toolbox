@@ -8,7 +8,8 @@ final class HotkeyTap {
     init(switcher: SwitcherController) { self.switcher = switcher }
 
     func start() -> Bool {
-        let types: [CGEventType] = [.keyDown, .keyUp, .flagsChanged, .leftMouseDown, .leftMouseUp]
+        let types: [CGEventType] = [.keyDown, .keyUp, .flagsChanged, .leftMouseDown, .leftMouseUp,
+                                    .rightMouseDown, .rightMouseUp, .otherMouseDown, .otherMouseUp]
         let mask = types.reduce(CGEventMask(0)) { $0 | (1 << $1.rawValue) }
         guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap,
                                           options: .defaultTap, eventsOfInterest: mask,
@@ -34,13 +35,22 @@ final class HotkeyTap {
             if let tap { CGEvent.tapEnable(tap: tap, enable: true) }
             return Unmanaged.passUnretained(event)
         }
+        // a shortcut is being recorded in the settings: everything goes to it
+        if MainActor.assumeIsolated({ ShortcutRecording.active }) { return Unmanaged.passUnretained(event) }
+        if type == .rightMouseDown || type == .rightMouseUp || type == .otherMouseDown || type == .otherMouseUp {
+            let button = event.getIntegerValueField(.mouseEventButtonNumber)
+            return MouseShortcuts.handle(type, button: button, flags: event.flags) ? nil : Unmanaged.passUnretained(event)
+        }
         if type == .leftMouseDown || type == .leftMouseUp {
+            let clicks = event.getIntegerValueField(.mouseEventClickState)
             if type == .leftMouseDown {
                 if AutoQuit.closeButtonDown(at: event.location) { return nil } // X on the last window → ⌘Q
                 if MaximizeButton.mouseDown(at: event.location, flags: event.flags) { return nil } // green = maximize
-                AutoQuit.actionStarted()
                 let p = event.location
                 MainActor.assumeIsolated { DockPreview.mouseDown(at: p) }
+                // the frontmost app's Dock icon minimizes it: that's not closing a window, so no quitting
+                if DockClick.handle(type, at: p, clicks: clicks) { AutoQuit.cancel(); return nil }
+                AutoQuit.actionStarted()
                 NotificationMover.mouseDown(at: p)
                 WindowSnap.shared.mouseDown(at: p) // snap windows to the edges
             } else {
@@ -49,8 +59,10 @@ final class HotkeyTap {
                 if MaximizeButton.consumeMouseUp() { return nil }
                 AutoQuit.actionEnded()
             }
-            return DockClick.handle(type, at: event.location) ? nil : Unmanaged.passUnretained(event)
+            if type == .leftMouseUp, DockClick.handle(type, at: event.location, clicks: clicks) { return nil }
+            return Unmanaged.passUnretained(event)
         }
+        if type == .flagsChanged { ShowDesktop.flagsChanged(event.flags) } // ⇧ + shake: follow the mouse only while ⇧ is down
         // Snap Assist open: Esc, arrows and Return belong to it
         if type == .keyDown, SnapAssist.shared.isVisible,
            SnapAssist.shared.handleKey(event.getIntegerValueField(.keyboardEventKeycode)) {
@@ -60,6 +72,13 @@ final class HotkeyTap {
         // ⌥Z open (Win+Z): numbers, arrows, Return, Esc
         if type == .keyDown, LayoutFlyout.shared.isVisible,
            LayoutFlyout.shared.handleKey(event.getIntegerValueField(.keyboardEventKeycode)) {
+            return nil
+        }
+        // ⌥D like Win+D: show the desktop
+        if type == .keyDown || type == .keyUp, ShowDesktop.handleKey(type, event) { return nil }
+        // zones: editor, quick layout switch, ⌥ + arrows between zones (before the snapping keys)
+        if type == .keyDown || type == .keyUp, !MainActor.assumeIsolated({ switcher.isVisible }),
+           ZoneKeys.handle(type, event) {
             return nil
         }
         // left ⌥ + arrows / Z like Win + arrows / Win+Z (before Ctrl→⌘ and the text-editing keys)
@@ -78,7 +97,8 @@ final class HotkeyTap {
             return nil
         }
         if type == .keyDown || type == .keyUp, !MainActor.assumeIsolated({ switcher.isVisible }),
-           ScreenSnip.handle(type, event) || AltGr.handle(type, event) || TextKeys.handle(type, event) {
+           ScreenSnip.handle(type, event) || AltGr.handle(type, event) || CapsLockAccents.handle(type, event) ||
+           TextKeys.handle(type, event) {
             return nil
         }
         let flags = event.flags

@@ -18,12 +18,15 @@ enum DockClick {
 
     /// Called by the event tap. Returns true if the click must be swallowed (the Dock must not see it,
     /// otherwise it would immediately reopen the window that was just minimized).
-    static func handle(_ type: CGEventType, at point: CGPoint) -> Bool {
+    /// `clicks`: 1 for a single click, 2 for the second click of a double click, and so on.
+    /// Only a single click minimizes: in a double click the first click brings the app forward and the
+    /// second one must not make it disappear straight away.
+    static func handle(_ type: CGEventType, at point: CGPoint, clicks: Int64 = 1) -> Bool {
         if type == .leftMouseUp {
             defer { swallowingUp = false }
             return swallowingUp
         }
-        guard type == .leftMouseDown, Settings.dockMinimize,
+        guard type == .leftMouseDown, clicks <= 1, Settings.dockMinimize,
               let front = NSWorkspace.shared.frontmostApplication,
               let dockPid = dockPid(),
               let clicked = appURL(dockPid: dockPid, at: point),

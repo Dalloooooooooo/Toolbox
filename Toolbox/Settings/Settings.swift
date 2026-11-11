@@ -54,6 +54,11 @@ enum Settings {
     static var ctrlShortcuts: Bool { d.object(forKey: Pref.ctrlShortcuts) as? Bool ?? true }
     static var textKeys: Bool { d.object(forKey: Pref.textKeys) as? Bool ?? true }
     static var rightCommandAltGr: Bool { d.object(forKey: Pref.rightCommandAltGr) as? Bool ?? true }
+    static var capsLockAccents: Bool { d.object(forKey: Pref.capsLockAccents) as? Bool ?? true }
+    static var showDesktopShake: Bool { d.object(forKey: Pref.showDesktopShake) as? Bool ?? true }
+    static var showDesktopKey: Bool { d.object(forKey: Pref.showDesktopKey) as? Bool ?? true }
+    static var showDesktopMinimizes: Bool { d.object(forKey: Pref.showDesktopMinimizes) as? Bool ?? true }
+    static var aeroShake: Bool { d.object(forKey: Pref.aeroShake) as? Bool ?? true }
     static var toolboxInDock: Bool { d.object(forKey: Pref.toolboxInDock) as? Bool ?? true }
     /// Apps that stay open even when their last window is closed (e.g. WhatsApp, to keep receiving messages)
     static var quitExclusions: [String] {
@@ -67,6 +72,7 @@ enum Settings {
     static var quitOnLastWindow: Bool { d.object(forKey: Pref.quitOnLastWindow) as? Bool ?? true }
     static var powerButton: Bool { d.object(forKey: Pref.powerButton) as? Bool ?? true }
     static var dockMinimize: Bool { d.object(forKey: Pref.dockMinimize) as? Bool ?? true }
+    static var minimizeIntoAppIcon: Bool { d.object(forKey: Pref.minimizeIntoAppIcon) as? Bool ?? true }
     static var dockMinimizeScope: DockMinimizeScope {
         DockMinimizeScope(rawValue: d.string(forKey: Pref.dockMinimizeScope) ?? "") ?? .allWindows
     }

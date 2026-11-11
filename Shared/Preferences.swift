@@ -23,11 +23,38 @@ enum Pref {
     static let snapAnimate = "snapAnimate"
     static let macTilingBackup = "macTilingBackup"   // how macOS tiling was set up before Toolbox
 
+    // Zones (like PowerToys FancyZones)
+    static let zonesEnabled = "zonesEnabled"
+    static let zonesData = "zonesData"               // layouts and which monitor uses which (JSON)
+    static let zonesHoldShift = "zonesHoldShift"     // zones appear while dragging with ⇧ held (otherwise always, ⇧ hides them)
+    static let zonesAllMonitors = "zonesAllMonitors"
+    static let zonesShowNumbers = "zonesShowNumbers"
+    static let zonesOpacity = "zonesOpacity"
+    static let zonesHighlightColor = "zonesHighlightColor"
+    static let zonesOverrideKeys = "zonesOverrideKeys"   // ⌥ + arrows move between zones
+    static let zonesKeysByPosition = "zonesKeysByPosition"
+    static let zonesQuickSwitch = "zonesQuickSwitch"
+    static let zonesFlash = "zonesFlash"
+    static let zonesExcludedApps = "zonesExcludedApps"
+    static let zonesAssist = "zonesAssist"           // after dropping a window, suggest windows for the other zones
+
+    // Show desktop
+    static let showDesktopShake = "showDesktopShake"
+    static let showDesktopKey = "showDesktopKey"
+    static let showDesktopMinimizes = "showDesktopMinimizes"   // minimize all windows (otherwise macOS Show Desktop)
+    static let showDesktopShakeHold = "showDesktopShakeHold"   // Shortcut (JSON): what to hold while shaking
+    static let showDesktopShortcut = "showDesktopShortcut"     // Shortcut (JSON)
+    static let zonesEditorShortcut = "zonesEditorShortcut"     // Shortcut (JSON)
+    static let screenSnipShortcut = "screenSnipShortcut"       // Shortcut (JSON)
+    static let aeroShake = "aeroShake"                         // shake a window by its title bar: minimize the others
+
     // Dock
     static let dockPreviews = "dockPreviews"
     static let dockPreviewWidth = "dockPreviewWidth"
     static let dockMinimize = "dockMinimize"
     static let dockMinimizeScope = "dockMinimizeScope"
+    static let minimizeIntoAppIcon = "minimizeIntoAppIcon"
+    static let minimizeIntoAppBackup = "minimizeIntoAppBackup"   // how macOS had it before Toolbox changed it
     static let toolboxInDock = "toolboxInDock"
     static let toolboxDockLastApplied = "toolboxDockLastApplied"
 
@@ -59,6 +86,7 @@ enum Pref {
     static let textKeys = "textKeys"
     static let rightCommandAltGr = "rightCommandAltGr"
     static let screenSnip = "screenSnip"
+    static let capsLockAccents = "capsLockAccents"
 
     // Notifications
     static let notificationStyle = "notificationStyle"

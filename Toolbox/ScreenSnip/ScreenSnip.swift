@@ -4,7 +4,6 @@ import Cocoa
 /// The snip goes to the clipboard and to Pictures/Screenshots; a notification lets you open it to mark it up.
 @MainActor
 enum ScreenSnip {
-    private static let sKey: Int64 = 1
     private static var swallowUp = false
     private static var running = false
 
@@ -15,15 +14,14 @@ enum ScreenSnip {
     /// From the event tap: true if the key should be swallowed.
     nonisolated static func handle(_ type: CGEventType, _ event: CGEvent) -> Bool {
         let key = event.getIntegerValueField(.keyboardEventKeycode)
-        guard key == sKey else { return false }
+        let shortcut = Shortcut.screenSnip
+        guard key == Int64(shortcut.keyCode ?? -1) else { return false }
         return MainActor.assumeIsolated {
             if type == .keyUp {
                 defer { swallowUp = false }
                 return swallowUp
             }
-            let f = event.flags
-            guard Settings.screenSnip, f.contains(.maskAlternate), f.contains(.maskShift),
-                  !f.contains(.maskCommand), !f.contains(.maskControl) else { return false }
+            guard Settings.screenSnip, shortcut.matches(key: key, flags: event.flags) else { return false }
             swallowUp = true
             if event.getIntegerValueField(.keyboardEventAutorepeat) == 0 { DispatchQueue.main.async { start() } }
             return true

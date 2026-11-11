@@ -26,6 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         MacOSTiling.sync()
         PowerButton.sync()
         ToolboxDockIcon.sync()
+        MinimizeIntoAppIcon.sync()
         DockPreview.start()
         Updater.shared.start()
         DispatchQueue.global(qos: .utility).async { AppIndex.build(force: true) } // for notification icons
@@ -79,6 +80,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         MacOSTiling.sync()
         PowerButton.sync()
         ToolboxDockIcon.sync()
+        MinimizeIntoAppIcon.sync()
         guard hotkeyActive else { return }
         SystemHotkeys.sync()
         statusLine.title = String(localized: "Active — press \(Settings.modifier.symbol) \(Settings.key.short)")

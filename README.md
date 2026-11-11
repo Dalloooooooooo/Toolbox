@@ -23,12 +23,14 @@
 |---|---|
 | **Switcher** | ⌘Tab (or the shortcut you prefer) shows **every window** with a live preview, like Alt+Tab — minimized and hidden ones and those on other desktops too. Close windows and apps with the X or with W/Q. |
 | **Window snapping** | Like Windows 11: drag to an edge for half the screen, to a corner for a quarter, to the top to fill it; the green button maximizes the window instead of opening it in full screen; a layout bar at the top of the screen, **Snap Assist** to fill the free space, and snapped windows that resize together. ⌥ + arrows and ⌥Z work like Win + arrows and Win+Z. |
-| **Dock** | Window previews when hovering Dock icons; clicking the icon of the frontmost app minimizes it, like the Windows taskbar. |
+| **Zones** | Like FancyZones in PowerToys: pick a layout for each monitor (columns, rows, grid, priority grid, focus) or draw your own, as a grid or freely; then drag a window while holding ⇧ and drop it on a zone. Near the border between two zones it takes both, with ⌃ it spans several. ⌥⇧ + the key above Tab opens the editor, ⌥⌃⌘ + number switches layout. |
+| **Desktop** | Shake the mouse hard while holding ⇧ (or the key you choose) to minimize every window and show the desktop, and again to bring them back; ⌥D does the same, like Win+D. **Aero Shake**: shake a window by its title bar to minimize all the others. |
+| **Dock** | Window previews when hovering Dock icons; clicking the icon of the frontmost app minimizes it, like the Windows taskbar. Minimized windows go into their app's icon instead of next to the Trash. |
 | **Power** | A power button in the Dock: lock, sleep, turn off the display, restart, shut down, with a timer. |
 | **Quitting apps** | Closing the last window really quits the app (like ⌘Q, so apps that restore their tabs do), with exceptions for apps you want to keep running. |
 | **Finder** | Return opens, F2 renames, Delete moves to the Trash, ⌫ goes back, Ctrl+X/Ctrl+V moves files. Visible extensions, folders first, folder sizes and more in one click (always reversible). |
 | **File Explorer** | A Windows-style file manager: address bar, columns with extension and size, previews, tabs. |
-| **Keyboard** | Ctrl+C/V/X/Z/A/S… like on a PC, Ctrl+arrows and Ctrl+⌫ by word, Home/End, right ⌘ as AltGr (@, #, €, [ ]), ⌥⇧S for a screen snip like Win+Shift+S. |
+| **Keyboard** | Ctrl+C/V/X/Z/A/S… like on a PC, Ctrl+arrows and Ctrl+⌫ by word, Home/End, right ⌘ as AltGr (@, #, €, [ ]), ⌥⇧S for a screen snip like Win+Shift+S, accented capitals (È, À, Ò…) with Caps Lock. Shortcuts can be recorded by pressing them, mouse buttons included. |
 | **Notifications** | Notifications that slide in at the top center, with the app's color and the duration and style you like. |
 | **Wallpaper** | Right-click an image in the Finder → *Set as Desktop Picture*. |
 
@@ -67,6 +69,8 @@ Toolbox/                 the main app (menu bar)
   Core/                  windows (Accessibility), screens, desktops, previews, app index
   Switcher/              ⌘Tab with previews
   Snap/                  snapping: zones and layouts, dragging, keyboard, Snap Assist, macOS tiling
+  Zones/                 custom zone layouts (like FancyZones): model, overlay, dragging, keys, editors
+  Desktop/               show the desktop (shake, ⌥D), minimize all, Aero Shake
   Dock/                  Dock clicks and previews, Toolbox and Power icons in the Dock
   AppQuit/               quit the app with its last window
   Finder/                Windows Explorer keys, Finder preferences, "Set as Desktop Picture" service
@@ -88,7 +92,7 @@ Power and File Explorer are built as separate apps and placed inside `Toolbox.ap
 
 ### How it works
 
-- **Events.** `EventTap` receives keys and clicks system-wide and hands them, in order, to: Snap Assist and ⌥Z when open, snapping (⌥ + arrows), Finder keys, Ctrl shortcuts, screen snip, AltGr and text keys, and finally the switcher. The first feature that uses an event swallows it; if none does, the event reaches the app as usual. Heavy work happens outside the tap, on the main run loop.
+- **Events.** `EventTap` receives keys and clicks system-wide and hands them, in order, to: mouse-button shortcuts, Snap Assist and ⌥Z when open, show desktop, zone keys, snapping (⌥ + arrows), Finder keys, Ctrl shortcuts, screen snip, AltGr and text keys, and finally the switcher. The first feature that uses an event swallows it; if none does, the event reaches the app as usual. Heavy work happens outside the tap, on the main run loop.
 - **Windows.** Other apps' windows are read and moved through the Accessibility API (`Core/AXWindow.swift`, `Core/WindowManager.swift`); Toolbox's own windows through AppKit (`Core/WindowRef.swift`). Coordinates are CoreGraphics ones, with the origin at the top left; `Core/ScreenGeometry.swift` converts to and from AppKit's.
 - **Private APIs.** Few, and declared where they are used: `_AXUIElementGetWindow` (window ↔ CGWindowID), `CGSSetSymbolicHotKeyEnabled` (to turn off the system ⌘Tab while Toolbox runs, and back on when it quits) and the SkyLight functions in `Core/Spaces.swift` for desktops.
 

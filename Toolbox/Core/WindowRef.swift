@@ -11,6 +11,9 @@ enum WindowRef {
 
     /// The standard window under the point (no panels or full-screen windows).
     static func at(_ p: CGPoint) -> WindowRef? {
+        // Toolbox's own panels (Snap Assist, zone editor…) are not windows to move
+        if NSApp.windows.contains(where: { $0.isVisible && !$0.ignoresMouseEvents && !isOwnSnappable($0) &&
+                                          ScreenGeo.cg($0.frame).contains(p) && $0.level >= .normal }) { return nil }
         if let mine = ownWindows.first(where: { ScreenGeo.cg($0.frame).contains(p) }) {
             // another app's window may be above ours: the on-screen order decides
             if let top = topWindowID(at: p), top != mine.cgWindowID {
@@ -63,6 +66,13 @@ enum WindowRef {
         }
     }
 
+    var pid: pid_t {
+        switch self {
+        case .other(let el): AXWin.pid(el)
+        case .own: ProcessInfo.processInfo.processIdentifier
+        }
+    }
+
     var frame: CGRect? {
         switch self {
         case .other(let el): AXWin.frame(el)
@@ -102,6 +112,18 @@ enum WindowRef {
     func setPosition(_ p: CGPoint) {
         guard let f = frame else { return }
         setFrame(CGRect(origin: p, size: f.size))
+    }
+
+    /// Brings the window in front of the others and its app to the front.
+    func raise() {
+        switch self {
+        case .other(let el):
+            AXUIElementPerformAction(el, kAXRaiseAction as CFString)
+            NSRunningApplication(processIdentifier: AXWin.pid(el))?.activate()
+        case .own(let w):
+            w.orderFrontRegardless()
+            NSApp.activate()
+        }
     }
 
     func minimize(_ on: Bool = true) {

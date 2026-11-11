@@ -23,12 +23,14 @@
 |---|---|
 | **Switcher** | ⌘Tab (o la scorciatoia che preferisci) mostra **ogni finestra** con la sua anteprima, come Alt+Tab: anche quelle ridotte a icona, nascoste o su altre scrivanie. Con la X o con W/Q chiudi finestre e app. |
 | **Affianca finestre** | Come Windows 11: trascina sui bordi per la metà, negli angoli per un quarto, in alto per tutto schermo; il pulsante verde ingrandisce la finestra invece di aprirla a schermo intero; barra dei layout in cima allo schermo, **Snap Assist** per riempire lo spazio libero, finestre affiancate che si ridimensionano insieme. ⌥ + frecce e ⌥Z come Win + frecce e Win+Z. |
-| **Dock** | Anteprime delle finestre passando sopra le icone; un clic sull'icona dell'app in primo piano la riduce a icona, come sulla barra delle applicazioni. |
+| **Zones** | Come FancyZones dei PowerToys: scegli un layout per ogni monitor (colonne, righe, griglia, griglia con priorità, focus) o disegnane uno tuo, a griglia o libero; poi trascina una finestra tenendo premuto ⇧ e lasciala su una zona. Vicino al bordo tra due zone le occupa entrambe, con ⌃ si estende su più zone. ⌥⇧ + il tasto sopra Tab apre l'editor, ⌥⌃⌘ + numero cambia layout. |
+| **Scrivania** | Scuoti forte il mouse tenendo premuto ⇧ (o il tasto che scegli) per ridurre a icona tutte le finestre e mostrare la scrivania, rifallo per riportarle com'erano; ⌥D fa lo stesso, come Win+D. **Aero Shake**: scuoti una finestra tenendola per la barra del titolo per ridurre a icona tutte le altre. |
+| **Dock** | Anteprime delle finestre passando sopra le icone; un clic sull'icona dell'app in primo piano la riduce a icona, come sulla barra delle applicazioni. Le finestre ridotte a icona vanno nell'icona della loro app invece che accanto al Cestino. |
 | **Power** | Un tasto di accensione nel Dock: blocca, standby, spegni lo schermo, riavvia, spegni, con timer. |
 | **Chiusura app** | Chiudendo l'ultima finestra l'app esce davvero (come ⌘Q, quindi le app che ripristinano le schede lo fanno), con un elenco di eccezioni per le app da tenere aperte. |
 | **Finder** | Invio apre, F2 rinomina, Canc cestina, ⌫ torna indietro, Ctrl+X/Ctrl+V sposta. Estensioni visibili, cartelle prima dei file, dimensioni delle cartelle e altre impostazioni in un clic (sempre ripristinabili). |
 | **Esplora file** | Un esploratore di file in stile Windows: barra degli indirizzi, colonne con estensione e dimensioni, anteprime, schede. |
-| **Tastiera** | Ctrl+C/V/X/Z/A/S… come su PC, Ctrl+frecce e Ctrl+⌫ sulle parole, Home/Fine, ⌘ destro come AltGr (@, #, €, [ ]), ⌥⇧S per il ritaglio dello schermo come Win+Maiusc+S. |
+| **Tastiera** | Ctrl+C/V/X/Z/A/S… come su PC, Ctrl+frecce e Ctrl+⌫ sulle parole, Home/Fine, ⌘ destro come AltGr (@, #, €, [ ]), ⌥⇧S per il ritaglio dello schermo come Win+Maiusc+S, maiuscole accentate (È, À, Ò…) con il Blocco maiuscole. Le scorciatoie si registrano premendole, anche con i tasti del mouse. |
 | **Notifiche** | Notifiche che scendono dall'alto al centro, con il colore dell'app, la durata e lo stile che preferisci. |
 | **Sfondo** | Tasto destro su un'immagine nel Finder → *Imposta come sfondo*. |
 
@@ -67,6 +69,8 @@ Toolbox/                 l'app principale (barra dei menu)
   Core/                  finestre (Accessibilità), schermi, scrivanie, anteprime, indice delle app
   Switcher/              ⌘Tab con le anteprime
   Snap/                  affiancamento: zone e layout, trascinamento, tastiera, Snap Assist
+  Zones/                 layout di zone personalizzati (come FancyZones): modello, sovrapposizione, trascinamento, tasti, editor
+  Desktop/               mostra la scrivania (scuoti, ⌥D), riduci tutto a icona, Aero Shake
   Dock/                  clic sulle icone, anteprime, icone di Toolbox e Power nel Dock
   AppQuit/               chiusura dell'app con l'ultima finestra
   Finder/                tasti di Esplora risorse, preferenze del Finder, servizio "Imposta come sfondo"
@@ -90,7 +94,7 @@ Power ed Esplora file vengono compilate come app separate e messe dentro `Toolbo
 
 ### Come funziona
 
-- **Eventi.** `EventTap` riceve tasti e clic di tutto il sistema e li passa, in ordine, a: Snap Assist e ⌥Z se aperti, affiancamento (⌥ + frecce), tasti del Finder, scorciatoie Ctrl, ritaglio, AltGr e tasti di scrittura, infine allo switcher. La prima funzione che usa un evento lo trattiene; se nessuna lo usa, l'evento arriva all'app come sempre. Il lavoro pesante si fa fuori dal tap, sul ciclo principale.
+- **Eventi.** `EventTap` riceve tasti e clic di tutto il sistema e li passa, in ordine, a: scorciatoie dei tasti del mouse, Snap Assist e ⌥Z se aperti, mostra scrivania, tasti delle zone, affiancamento (⌥ + frecce), tasti del Finder, scorciatoie Ctrl, ritaglio, AltGr e tasti di scrittura, infine allo switcher. La prima funzione che usa un evento lo trattiene; se nessuna lo usa, l'evento arriva all'app come sempre. Il lavoro pesante si fa fuori dal tap, sul ciclo principale.
 - **Finestre.** Si leggono e si spostano con le API di Accessibilità (`Core/AXWindow.swift`, `Core/WindowManager.swift`). Le coordinate sono quelle di CoreGraphics, con l'origine in alto a sinistra; `Core/ScreenGeometry.swift` converte da e verso quelle di AppKit.
 - **API private.** Poche e dichiarate dove servono: `_AXUIElementGetWindow` (finestra ↔ CGWindowID), `CGSSetSymbolicHotKeyEnabled` (per disattivare il ⌘Tab di sistema finché Toolbox è aperta, e riattivarlo all'uscita) e le funzioni di SkyLight in `Core/Spaces.swift` per le scrivanie.
 

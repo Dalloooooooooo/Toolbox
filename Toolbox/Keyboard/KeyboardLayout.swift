@@ -35,6 +35,21 @@ enum KeyboardLayout {
         TISDisableInputSource(src)
     }
 
+    /// The character the current layout types for a key, with or without ⇧ and ⌥ (ignoring Caps Lock).
+    static func character(for key: Int64, shift: Bool, option: Bool = false) -> String? {
+        guard let src = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
+              let ptr = TISGetInputSourceProperty(src, kTISPropertyUnicodeKeyLayoutData) else { return nil }
+        let data = Unmanaged<CFData>.fromOpaque(ptr).takeUnretainedValue()
+        var dead: UInt32 = 0, len = 0
+        var chars = [UniChar](repeating: 0, count: 4)
+        let mods = UInt32((option ? optionKey : 0) | (shift ? shiftKey : 0)) >> 8
+        let status = CFDataGetBytePtr(data).withMemoryRebound(to: UCKeyboardLayout.self, capacity: 1) {
+            UCKeyTranslate($0, UInt16(key), UInt16(kUCKeyActionDown), mods & 0xFF, UInt32(LMGetKbdType()),
+                           OptionBits(kUCKeyTranslateNoDeadKeysBit), &dead, 4, &len, &chars)
+        }
+        return status == noErr ? String(utf16CodeUnits: chars, count: len) : nil
+    }
+
     private static func source(_ id: String) -> TISInputSource? {
         let filter = [kTISPropertyInputSourceID as String: id] as CFDictionary
         return (TISCreateInputSourceList(filter, true)?.takeRetainedValue() as? [TISInputSource])?.first

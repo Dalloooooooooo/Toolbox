@@ -59,7 +59,7 @@ final class WindowSnap {
     func mouseDown(at p: CGPoint) {
         SnapAssist.shared.mouseDown(at: p)
         LayoutFlyout.shared.mouseDown(at: p)
-        guard SnapSettings.enabled else { return }
+        guard SnapSettings.enabled || ZoneSettings.enabled || Settings.aeroShake else { return }
         DispatchQueue.main.async { self.begin(at: p) }
     }
 
@@ -79,6 +79,7 @@ final class WindowSnap {
         let edgeDistance = min(abs(p.x - f.minX), abs(f.maxX - p.x), abs(p.y - f.minY), abs(f.maxY - p.y))
         onEdge = edgeDistance <= 8
         mode = .undecided; target = nil; verticalTarget = nil
+        AeroShake.dragStarted()
         let t = Timer(timeInterval: 1.0 / 60, repeats: true) { [weak self] _ in self?.tick() }
         RunLoop.main.add(t, forMode: .common)
         timer = t
@@ -96,10 +97,14 @@ final class WindowSnap {
                         (!onEdge && f.size != startFrame.size) { startMoving(f) }
         }
         switch mode {
-        case .moving: updateTarget()
+        case .moving:
+            AeroShake.dragging(win, id: winID, x: ScreenGeo.mouse.x)
+            // zones (⇧ held) take over from edge snapping
+            if ZoneDrag.shared.update(pid: win.pid, window: winID) { setTarget(nil); bar.hide() }
+            else if SnapSettings.enabled { updateTarget() }
         case .resizing:
             if f != lastFrame { resized(to: f) }
-            updateVerticalTarget(f)
+            if SnapSettings.enabled { updateVerticalTarget(f) }
         case .undecided: break
         }
         lastFrame = f
@@ -246,7 +251,17 @@ final class WindowSnap {
             return
         }
         let release = ScreenGeo.mouse
-        if mode == .undecided, !onEdge, hypot(release.x - grabPoint.x, release.y - grabPoint.y) > 10 {
+        if mode == .moving, let z = ZoneDrag.shared.target {
+            ZoneDrag.shared.stop()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                self.place(z.frame, zone: SnapZone(unit: z.unit), to: w, id: id, area: z.area, restore: start)
+                // like Snap Assist: the other open windows for the remaining zones
+                SnapAssist.shared.offer(zoneFrames: z.zones, placed: z.lit, area: z.area, excluding: id)
+            }
+            return
+        }
+        ZoneDrag.shared.stop()
+        if mode == .undecided, !onEdge, SnapSettings.enabled, hypot(release.x - grabPoint.x, release.y - grabPoint.y) > 10 {
             // thrown and dropped at once: macOS hasn't moved the window yet, look again in a moment
             let grab = grabX
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
@@ -254,7 +269,7 @@ final class WindowSnap {
             }
             return
         }
-        if mode == .moving { updateTarget() } // where the mouse is at release
+        if mode == .moving, SnapSettings.enabled { updateTarget() } // where the mouse is at release
         guard mode == .moving, let t = target else { return }
         // let macOS finish the drag, then place the window
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -284,7 +299,11 @@ final class WindowSnap {
 
     /// Puts the window in the zone and remembers it. `restore` is where it was before (if it wasn't already snapped).
     func apply(_ z: SnapZone, to w: WindowRef, id: CGWindowID, area: CGRect, restore: CGRect? = nil) {
-        let target = z.frame(in: area)
+        place(z.frame(in: area), zone: z, to: w, id: id, area: area, restore: restore)
+    }
+
+    /// Like `apply`, at an exact frame (zones with spacing between them).
+    func place(_ target: CGRect, zone z: SnapZone, to w: WindowRef, id: CGWindowID, area: CGRect, restore: CGRect? = nil) {
         let before = w.frame
         let keep = snapped[id]?.restore ?? before.flatMap { restoreFrame(for: id, at: $0) } ?? restore ?? before ?? target
         pruneRemembered()

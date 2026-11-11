@@ -6,6 +6,7 @@ struct DockPage: View {
     @AppStorage(Pref.toolboxInDock) private var toolboxInDock = true
     @AppStorage(Pref.dockMinimize) private var dockMinimize = true
     @AppStorage(Pref.dockMinimizeScope) private var dockMinimizeScope = DockMinimizeScope.allWindows.rawValue
+    @AppStorage(Pref.minimizeIntoAppIcon) private var minimizeIntoAppIcon = true
 
     var body: some View {
         Form {
@@ -16,6 +17,11 @@ struct DockPage: View {
                 }
                 .disabled(!dockPreviews)
                 Text("Like the Windows taskbar: click a preview to open that window, the X closes it. Minimized windows and windows on other desktops are included too.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
+            Section("Minimized windows") {
+                Toggle("Minimize windows into the app's icon", isOn: $minimizeIntoAppIcon)
+                Text("Like the Windows taskbar: minimized windows go into their app's icon instead of next to the Trash. Click the icon (or its preview) to bring them back. Turning this off puts the macOS setting back as it was.")
                     .font(.callout).foregroundStyle(.secondary)
             }
             Section("Toolbox in the Dock") {
