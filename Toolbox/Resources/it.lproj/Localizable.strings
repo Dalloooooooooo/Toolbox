@@ -376,7 +376,7 @@
 "yyyy-MM-dd 'at' HH.mm.ss" = "yyyy-MM-dd 'alle' HH.mm.ss";
 "⌃ Control" = "⌃ Control";
 "⌘ Command" = "⌘ Command";
-"⌘ keeps working too. In terminals (Terminal, iTerm, Warp…) Ctrl stays Ctrl, because there Ctrl+C interrupts the command." = "Anche ⌘ continua a funzionare. Nei terminali (Terminale, iTerm, Warp…) Ctrl resta Ctrl, perché lì Ctrl+C interrompe il comando.";
+"⌘ keeps working too. In terminals (Terminal, iTerm, Warp…) Ctrl stays Ctrl, because there Ctrl+C interrupts the command; Ctrl+⌫ still deletes the word to the left." = "Anche ⌘ continua a funzionare. Nei terminali (Terminale, iTerm, Warp…) Ctrl resta Ctrl, perché lì Ctrl+C interrompe il comando; Ctrl+⌫ cancella comunque la parola a sinistra.";
 "⌘Q: quits the app" = "⌘Q: chiude l'app";
 "⌘⇧. also shows and hides them on the fly." = "Anche ⌘⇧. li mostra e nasconde al volo.";
 "⌥ Option" = "⌥ Option";
@@ -497,3 +497,4 @@
 "Window" = "Finestra";
 "Ctrl + mouse wheel zooms in and out" = "Ctrl + rotellina del mouse ingrandisce e riduce";
 "Like on Windows, in the apps that can zoom: browsers, PDFs and images in Preview, Photos, Maps… Elsewhere the wheel scrolls as usual." = "Come su Windows, nelle app che possono fare lo zoom: browser, PDF e immagini in Anteprima, Foto, Mappe… Altrove la rotellina scorre come sempre.";
+"goes back · on the desktop, moves to the Trash" = "torna indietro · sulla scrivania, sposta nel Cestino";

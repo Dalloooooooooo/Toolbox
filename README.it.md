@@ -28,7 +28,7 @@
 | **Dock** | Anteprime delle finestre passando sopra le icone; un clic sull'icona dell'app in primo piano la riduce a icona, come sulla barra delle applicazioni. Le finestre ridotte a icona vanno nell'icona della loro app invece che accanto al Cestino. |
 | **Power** | Un tasto di accensione nel Dock: blocca, standby, spegni lo schermo, riavvia, spegni, con timer. |
 | **Chiusura app** | Chiudendo l'ultima finestra l'app esce davvero (come ⌘Q, quindi le app che ripristinano le schede lo fanno), con un elenco di eccezioni per le app da tenere aperte. |
-| **Finder** | Invio apre, F2 rinomina, Canc cestina, ⌫ torna indietro, Ctrl+X/Ctrl+V sposta. Estensioni visibili, cartelle prima dei file, dimensioni delle cartelle e altre impostazioni in un clic (sempre ripristinabili). |
+| **Finder** | Invio apre, F2 rinomina, Canc cestina, ⌫ torna indietro (sulla scrivania cestina anche lui), Ctrl+X/Ctrl+V sposta. Estensioni visibili, cartelle prima dei file, dimensioni delle cartelle e altre impostazioni in un clic (sempre ripristinabili). |
 | **Esplora file** | Un esploratore di file in stile Windows: barra degli indirizzi, colonne con estensione e dimensioni, anteprime, schede. |
 | **Tastiera** | Ctrl+C/V/X/Z/A/S… come su PC, Ctrl+frecce e Ctrl+⌫ sulle parole, Home/Fine, ⌘ destro come AltGr (@, #, €, [ ]), ⌥⇧S per il ritaglio dello schermo come Win+Maiusc+S (lo schermo si congela), maiuscole accentate (È, À, Ò…) con il Blocco maiuscole, Ctrl + rotellina per lo zoom. Le scorciatoie si registrano premendole, anche con i tasti del mouse. |
 | **Notifiche** | Notifiche che scendono dall'alto al centro, con il colore dell'app, la durata e lo stile che preferisci. |

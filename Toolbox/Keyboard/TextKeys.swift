@@ -7,6 +7,7 @@ import Cocoa
 enum TextKeys {
     static let left: Int64 = 123, right: Int64 = 124, down: Int64 = 125, up: Int64 = 126
     static let backspace: Int64 = 51, forwardDelete: Int64 = 117, home: Int64 = 115, end: Int64 = 119
+    private static let w: Int64 = 13
 
     struct Row: Identifiable { let id = UUID(); let windows: String; let action: String }
     static let rows: [Row] = [
@@ -40,10 +41,18 @@ enum TextKeys {
             rewrite(event, r.key, r.flags); return false
         }
         let flags = event.flags
-        guard Settings.textKeys,
-              !CtrlShortcuts.excludedApps.contains(NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "")
-        else { return false }
+        guard Settings.textKeys else { return false }
         let ctrl = flags.contains(.maskControl), cmd = flags.contains(.maskCommand), alt = flags.contains(.maskAlternate)
+        if CtrlShortcuts.excludedApps.contains(NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "") {
+            // terminals: Ctrl stays Ctrl, but Ctrl+⌫ deletes the word to the left like in Windows Terminal.
+            // The shell does it with ^W (zsh, bash, fish…), unless the text is in a Spotlight-like panel.
+            guard key == backspace, ctrl, !cmd, !alt, !flags.contains(.maskShift), floatingTextField() == nil
+            else { return false }
+            pressed[key] = (w, flags)
+            rewrite(event, w, flags)
+            event.keyboardSetUnicodeString(stringLength: 1, unicodeString: [0x17]) // ^W
+            return false
+        }
         let base = CGEventFlags(rawValue: flags.rawValue & ~ctrlBits)
 
         // Ctrl+⌘+←/→: switch desktop (Ctrl+←/→ is now used for words)
@@ -102,16 +111,48 @@ enum TextKeys {
     /// Home/End must be rewritten only while typing: outside a text field, on the Mac (and on Windows)
     /// they scroll the page, while ⌘← in browsers would mean "previous page".
     static func isEditingText() -> Bool {
+        if floatingTextField() != nil { return true }
         // ask the frontmost app: the "system-wide" query often doesn't respond
-        guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier else { return false }
-        var focused: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(AXUIElementCreateApplication(pid), kAXFocusedUIElementAttribute as CFString,
-                                            &focused) == .success, let focused else { return false }
-        let el = focused as! AXUIElement
-        var role: CFTypeRef?
-        AXUIElementCopyAttributeValue(el, kAXRoleAttribute as CFString, &role)
-        if let r = role as? String, ["AXTextField", "AXTextArea", "AXComboBox"].contains(r) { return true }
+        guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier,
+              let el = focusedElement(of: pid) else { return false }
+        if isTextField(el) { return true }
         var range: CFTypeRef?
         return AXUIElementCopyAttributeValue(el, kAXSelectedTextRangeAttribute as CFString, &range) == .success && range != nil
+    }
+
+    /// Spotlight, Raycast, Alfred and the like: a panel above the windows that gets the keys without becoming
+    /// the frontmost app (the Finder, say, stays frontmost). Returns its app if it has a text field focused.
+    static func floatingTextField() -> pid_t? {
+        let front = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        let me = ProcessInfo.processInfo.processIdentifier
+        let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID)
+            as? [[String: Any]] ?? []
+        var checked = Set<pid_t>()
+        for info in list {
+            let layer = info[kCGWindowLayer as String] as? Int ?? 0
+            if layer <= 0 { break } // the normal windows: no panels above them
+            guard layer < Int(CGWindowLevelForKey(.screenSaverWindow)),
+                  let pid = info[kCGWindowOwnerPID as String] as? pid_t, pid != front, pid != me,
+                  (info[kCGWindowAlpha as String] as? Double ?? 1) > 0,
+                  !["Window Server", "Dock"].contains(info[kCGWindowOwnerName as String] as? String ?? ""),
+                  checked.insert(pid).inserted else { continue }
+            if let el = focusedElement(of: pid, timeout: 0.1), isTextField(el) { return pid }
+        }
+        return nil
+    }
+
+    private static func focusedElement(of pid: pid_t, timeout: Float = 0) -> AXUIElement? {
+        let app = AXUIElementCreateApplication(pid)
+        if timeout > 0 { AXUIElementSetMessagingTimeout(app, timeout) }
+        var focused: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(app, kAXFocusedUIElementAttribute as CFString, &focused) == .success,
+              let focused else { return nil }
+        return (focused as! AXUIElement)
+    }
+
+    private static func isTextField(_ el: AXUIElement) -> Bool {
+        var role: CFTypeRef?
+        AXUIElementCopyAttributeValue(el, kAXRoleAttribute as CFString, &role)
+        return ["AXTextField", "AXTextArea", "AXComboBox", "AXSearchField"].contains(role as? String ?? "")
     }
 }

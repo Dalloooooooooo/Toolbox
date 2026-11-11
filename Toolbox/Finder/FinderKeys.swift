@@ -1,6 +1,6 @@
 import Cocoa
 
-/// Return opens, F2 renames, Delete moves to the Trash, ⌫ goes back, Ctrl/⌘+X then Ctrl/⌘+V moves files.
+/// Return opens, F2 renames, Delete moves to the Trash (⌫ too on the desktop), ⌫ goes back, Ctrl/⌘+X then Ctrl/⌘+V moves files.
 /// Instead of simulating keys, we "click" the Finder's menu items: the Finder itself does all the work
 /// (progress windows, name conflicts, Undo…). While renaming or typing, the keys behave normally.
 @MainActor
@@ -47,6 +47,8 @@ enum FinderKeys {
         case fwdDelete:
             return press(char: "\u{8}", mods: shift ? 2 : 0, key: key)  // Move to Trash / Delete Immediately…
         case backspace:
+            // on the desktop there's nothing to go back to: the Mac's delete key (⌫) works like Windows' Del there
+            if onDesktop() { return press(char: "\u{8}", mods: 0, key: key) } // Move to Trash
             return press(titles: ["Indietro", "Back"], key: key)         // Go › Back
         case x:
             guard press(char: "C", mods: 0, key: key) else { return false } // copy, and remember it's a "cut"
@@ -96,6 +98,12 @@ enum FinderKeys {
             }
         }
         return nil
+    }
+
+    /// The desktop has the focus (it is a Finder "window" without the window: no focused window).
+    private static func onDesktop() -> Bool {
+        guard let finder = NSRunningApplication.runningApplications(withBundleIdentifier: finderID).first else { return false }
+        return attr(AXUIElementCreateApplication(finder.processIdentifier), kAXFocusedWindowAttribute) == nil
     }
 
     private static func attr(_ el: AXUIElement, _ name: String) -> CFTypeRef? {

@@ -28,7 +28,7 @@
 | **Dock** | Window previews when hovering Dock icons; clicking the icon of the frontmost app minimizes it, like the Windows taskbar. Minimized windows go into their app's icon instead of next to the Trash. |
 | **Power** | A power button in the Dock: lock, sleep, turn off the display, restart, shut down, with a timer. |
 | **Quitting apps** | Closing the last window really quits the app (like ⌘Q, so apps that restore their tabs do), with exceptions for apps you want to keep running. |
-| **Finder** | Return opens, F2 renames, Delete moves to the Trash, ⌫ goes back, Ctrl+X/Ctrl+V moves files. Visible extensions, folders first, folder sizes and more in one click (always reversible). |
+| **Finder** | Return opens, F2 renames, Delete moves to the Trash, ⌫ goes back (on the desktop it moves to the Trash too), Ctrl+X/Ctrl+V moves files. Visible extensions, folders first, folder sizes and more in one click (always reversible). |
 | **File Explorer** | A Windows-style file manager: address bar, columns with extension and size, previews, tabs. |
 | **Keyboard** | Ctrl+C/V/X/Z/A/S… like on a PC, Ctrl+arrows and Ctrl+⌫ by word, Home/End, right ⌘ as AltGr (@, #, €, [ ]), ⌥⇧S for a screen snip like Win+Shift+S (the screen freezes), accented capitals (È, À, Ò…) with Caps Lock, Ctrl + wheel to zoom. Shortcuts can be recorded by pressing them, mouse buttons included. |
 | **Notifications** | Notifications that slide in at the top center, with the app's color and the duration and style you like. |

@@ -28,7 +28,7 @@ struct FinderPage: View {
                     LabeledContent("Return") { Text("opens the file or folder") }
                     LabeledContent("F2") { Text("renames") }
                     LabeledContent("Delete (fn ⌫)") { Text("moves to the Trash · with Shift, deletes immediately") }
-                    LabeledContent("⌫") { Text("goes back") }
+                    LabeledContent("⌫") { Text("goes back · on the desktop, moves to the Trash") }
                     LabeledContent("Ctrl+X, then Ctrl+V") { Text("moves the files (also with ⌘)") }
                 }
                 .foregroundStyle(finderKeys ? .primary : .secondary)

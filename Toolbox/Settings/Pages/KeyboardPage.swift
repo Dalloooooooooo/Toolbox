@@ -44,7 +44,7 @@ struct KeyboardPage: View {
                 ForEach(CtrlShortcuts.mappings, id: \.key) { m in
                     Text(m.label).foregroundStyle(ctrlShortcuts ? .primary : .secondary)
                 }
-                Text("⌘ keeps working too. In terminals (Terminal, iTerm, Warp…) Ctrl stays Ctrl, because there Ctrl+C interrupts the command.")
+                Text("⌘ keeps working too. In terminals (Terminal, iTerm, Warp…) Ctrl stays Ctrl, because there Ctrl+C interrupts the command; Ctrl+⌫ still deletes the word to the left.")
                     .font(.callout).foregroundStyle(.secondary)
                 Toggle("Ctrl + mouse wheel zooms in and out", isOn: $ctrlScrollZoom)
                 Text("Like on Windows, in the apps that can zoom: browsers, PDFs and images in Preview, Photos, Maps… Elsewhere the wheel scrolls as usual.")
