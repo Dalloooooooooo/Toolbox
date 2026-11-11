@@ -30,7 +30,7 @@
 | **Chiusura app** | Chiudendo l'ultima finestra l'app esce davvero (come ⌘Q, quindi le app che ripristinano le schede lo fanno), con un elenco di eccezioni per le app da tenere aperte. |
 | **Finder** | Invio apre, F2 rinomina, Canc cestina, ⌫ torna indietro, Ctrl+X/Ctrl+V sposta. Estensioni visibili, cartelle prima dei file, dimensioni delle cartelle e altre impostazioni in un clic (sempre ripristinabili). |
 | **Esplora file** | Un esploratore di file in stile Windows: barra degli indirizzi, colonne con estensione e dimensioni, anteprime, schede. |
-| **Tastiera** | Ctrl+C/V/X/Z/A/S… come su PC, Ctrl+frecce e Ctrl+⌫ sulle parole, Home/Fine, ⌘ destro come AltGr (@, #, €, [ ]), ⌥⇧S per il ritaglio dello schermo come Win+Maiusc+S, maiuscole accentate (È, À, Ò…) con il Blocco maiuscole. Le scorciatoie si registrano premendole, anche con i tasti del mouse. |
+| **Tastiera** | Ctrl+C/V/X/Z/A/S… come su PC, Ctrl+frecce e Ctrl+⌫ sulle parole, Home/Fine, ⌘ destro come AltGr (@, #, €, [ ]), ⌥⇧S per il ritaglio dello schermo come Win+Maiusc+S (lo schermo si congela), maiuscole accentate (È, À, Ò…) con il Blocco maiuscole, Ctrl + rotellina per lo zoom. Le scorciatoie si registrano premendole, anche con i tasti del mouse. |
 | **Notifiche** | Notifiche che scendono dall'alto al centro, con il colore dell'app, la durata e lo stile che preferisci. |
 | **Sfondo** | Tasto destro su un'immagine nel Finder → *Imposta come sfondo*. |
 
@@ -96,7 +96,7 @@ Power ed Esplora file vengono compilate come app separate e messe dentro `Toolbo
 
 - **Eventi.** `EventTap` riceve tasti e clic di tutto il sistema e li passa, in ordine, a: scorciatoie dei tasti del mouse, Snap Assist e ⌥Z se aperti, mostra scrivania, tasti delle zone, affiancamento (⌥ + frecce), tasti del Finder, scorciatoie Ctrl, ritaglio, AltGr e tasti di scrittura, infine allo switcher. La prima funzione che usa un evento lo trattiene; se nessuna lo usa, l'evento arriva all'app come sempre. Il lavoro pesante si fa fuori dal tap, sul ciclo principale.
 - **Finestre.** Si leggono e si spostano con le API di Accessibilità (`Core/AXWindow.swift`, `Core/WindowManager.swift`). Le coordinate sono quelle di CoreGraphics, con l'origine in alto a sinistra; `Core/ScreenGeometry.swift` converte da e verso quelle di AppKit.
-- **API private.** Poche e dichiarate dove servono: `_AXUIElementGetWindow` (finestra ↔ CGWindowID), `CGSSetSymbolicHotKeyEnabled` (per disattivare il ⌘Tab di sistema finché Toolbox è aperta, e riattivarlo all'uscita) e le funzioni di SkyLight in `Core/Spaces.swift` per le scrivanie.
+- **API private.** Poche e dichiarate dove servono: `_AXUIElementGetWindow` (finestra ↔ CGWindowID), `CGSHWCaptureWindowList` (anteprime delle finestre ridotte a icona), `CGSSetSymbolicHotKeyEnabled` (per disattivare il ⌘Tab di sistema finché Toolbox è aperta, e riattivarlo all'uscita) e le funzioni di SkyLight in `Core/Spaces.swift` per le scrivanie.
 
 ### Aggiungere un'impostazione
 

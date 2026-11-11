@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         WindowManager.startTracking()
         PreviewStore.startBackgroundRefresh()
+        CtrlScrollZoom.start()
         NotificationMover.start()
         let os = ProcessInfo.processInfo.operatingSystemVersionString
         Log.info("starting Toolbox \(Updater.currentVersion) on macOS \(os), Accessibility \(AXIsProcessTrusted() ? "yes" : "no")")

@@ -46,6 +46,7 @@ enum Pref {
     static let showDesktopShortcut = "showDesktopShortcut"     // Shortcut (JSON)
     static let zonesEditorShortcut = "zonesEditorShortcut"     // Shortcut (JSON)
     static let screenSnipShortcut = "screenSnipShortcut"       // Shortcut (JSON)
+    static let screenSnipMode = "screenSnipMode"               // last snip mode: rectangle, freeform, window, fullScreen
     static let aeroShake = "aeroShake"                         // shake a window by its title bar: minimize the others
 
     // Dock
@@ -87,6 +88,7 @@ enum Pref {
     static let rightCommandAltGr = "rightCommandAltGr"
     static let screenSnip = "screenSnip"
     static let capsLockAccents = "capsLockAccents"
+    static let ctrlScrollZoom = "ctrlScrollZoom"
 
     // Notifications
     static let notificationStyle = "notificationStyle"

@@ -8,6 +8,7 @@ struct KeyboardPage: View {
     @AppStorage(Pref.rightCommandAltGr) private var rightCommandAltGr = true
     @AppStorage(Pref.screenSnip) private var screenSnip = true
     @AppStorage(Pref.capsLockAccents) private var capsLockAccents = true
+    @AppStorage(Pref.ctrlScrollZoom) private var ctrlScrollZoom = true
     @State private var current = KeyboardLayout.current
     @State private var enabled = KeyboardLayout.enabled
 
@@ -45,6 +46,9 @@ struct KeyboardPage: View {
                 }
                 Text("⌘ keeps working too. In terminals (Terminal, iTerm, Warp…) Ctrl stays Ctrl, because there Ctrl+C interrupts the command.")
                     .font(.callout).foregroundStyle(.secondary)
+                Toggle("Ctrl + mouse wheel zooms in and out", isOn: $ctrlScrollZoom)
+                Text("Like on Windows, in the apps that can zoom: browsers, PDFs and images in Preview, Photos, Maps… Elsewhere the wheel scrolls as usual.")
+                    .font(.callout).foregroundStyle(.secondary)
             }
 
             Section("Screen snipping") {
@@ -53,7 +57,7 @@ struct KeyboardPage: View {
                     Spacer()
                     ShortcutField(pref: Pref.screenSnipShortcut, default: .defaultScreenSnip).disabled(!screenSnip)
                 }
-                Text("Drag to choose the area; press Space to capture a whole window, Esc to cancel. The screenshot goes to the clipboard (paste it with Ctrl+V) and is saved in Pictures → Screenshots. Click the notification to open it and draw on it.")
+                Text("Like on Windows, the screen freezes: choose rectangle, freeform, window or full screen in the bar at the top, Esc to cancel. The screenshot goes to the clipboard (paste it with Ctrl+V) and is saved in Pictures → Screenshots. Click the notification to open it and draw on it.")
                     .font(.callout).foregroundStyle(.secondary)
                 Button("Open the Screenshots folder") { ScreenSnip.openFolder() }
             }

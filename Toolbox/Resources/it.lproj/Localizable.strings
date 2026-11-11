@@ -85,7 +85,7 @@
 "Download and install" = "Scarica e installa";
 "Download failed%@." = "Download non riuscito%@.";
 "Downloading…" = "Download in corso…";
-"Drag to choose the area; press Space to capture a whole window, Esc to cancel. The screenshot goes to the clipboard (paste it with Ctrl+V) and is saved in Pictures → Screenshots. Click the notification to open it and draw on it." = "Trascina per scegliere la zona; premi Spazio per prendere una finestra intera, Esc per annullare. Il ritaglio finisce negli appunti (incollalo con Ctrl+V) e viene salvato in Immagini → Ritagli. Clicca la notifica per aprirlo e disegnarci sopra.";
+"Like on Windows, the screen freezes: choose rectangle, freeform, window or full screen in the bar at the top, Esc to cancel. The screenshot goes to the clipboard (paste it with Ctrl+V) and is saved in Pictures → Screenshots. Click the notification to open it and draw on it." = "Come su Windows, lo schermo si congela: scegli rettangolo, mano libera, finestra o schermo intero nella barra in alto, Esc per annullare. Il ritaglio finisce negli appunti (incollalo con Ctrl+V) e viene salvato in Immagini → Ritagli. Clicca la notifica per aprirlo e disegnarci sopra.";
 "Dragging a window's top or bottom edge to the edge of the screen also stretches the window vertically. Right ⌥ stays AltGr." = "Anche trascinando il bordo superiore o inferiore di una finestra fino al bordo dello schermo, la finestra si allunga in verticale. Il ⌥ destro resta AltGr.";
 "Edit" = "Modifica";
 "Finder" = "Finder";
@@ -491,3 +491,9 @@
 "Minimize them all into the Dock" = "Riducile tutte nel Dock";
 "Move them aside (macOS Show Desktop)" = "Spostale di lato (Mostra scrivania di macOS)";
 "Do it again and the windows come back as they were, the one in front back in front. Shake it hard, left and right: normal movements do nothing. To change a key, click it and press the new one (keys, modifiers or a mouse button)." = "Rifallo e le finestre tornano com'erano, con davanti quella che era davanti. Scuoti forte, a destra e a sinistra: i movimenti normali non fanno niente. Per cambiare un tasto, cliccalo e premi quello nuovo (tasti, modificatori o un pulsante del mouse).";
+
+"Rectangle" = "Rettangolo";
+"Freeform" = "Mano libera";
+"Window" = "Finestra";
+"Ctrl + mouse wheel zooms in and out" = "Ctrl + rotellina del mouse ingrandisce e riduce";
+"Like on Windows, in the apps that can zoom: browsers, PDFs and images in Preview, Photos, Maps… Elsewhere the wheel scrolls as usual." = "Come su Windows, nelle app che possono fare lo zoom: browser, PDF e immagini in Anteprima, Foto, Mappe… Altrove la rotellina scorre come sempre.";

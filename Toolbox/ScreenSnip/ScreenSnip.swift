@@ -1,6 +1,6 @@
 import Cocoa
 
-/// Screen snipping like Win+Shift+S: ⌥⇧S → select an area (or a window with Space).
+/// Screen snipping like Win+Shift+S: ⌥⇧S freezes the screen → rectangle, freeform, window or full screen.
 /// The snip goes to the clipboard and to Pictures/Screenshots; a notification lets you open it to mark it up.
 @MainActor
 enum ScreenSnip {
@@ -36,6 +36,16 @@ enum ScreenSnip {
         // local time; the word between date and time follows the language ("at" / "alle")
         df.dateFormat = String(localized: "yyyy-MM-dd 'at' HH.mm.ss")
         let file = folder.appendingPathComponent("\(String(localized: "Screenshot")) \(df.string(from: Date())).png")
+        // like Windows: the screen freezes, so what's on it (menus, animations…) stays still while you select
+        SnipOverlay.show(done: { image in
+            running = false
+            guard let image, save(image, to: file) else { return } // Esc: no snip
+            finished(file)
+        }, failed: { systemSelection(file) })
+    }
+
+    /// Without the Screen Recording permission: macOS's own selection (the screen doesn't freeze).
+    private static func systemSelection(_ file: URL) {
         let p = Process()
         p.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
         p.arguments = ["-i", "-x", "-o", file.path] // -i selection, -x no sound, -o windows without shadow
@@ -46,6 +56,13 @@ enum ScreenSnip {
             }
         }
         do { try p.run() } catch { running = false }
+    }
+
+    private static func save(_ image: CGImage, to file: URL) -> Bool {
+        guard let dest = CGImageDestinationCreateWithURL(file as CFURL, "public.png" as CFString, 1, nil)
+        else { return false }
+        CGImageDestinationAddImage(dest, image, nil)
+        return CGImageDestinationFinalize(dest)
     }
 
     private static func finished(_ file: URL) {

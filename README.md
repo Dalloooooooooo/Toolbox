@@ -30,7 +30,7 @@
 | **Quitting apps** | Closing the last window really quits the app (like ⌘Q, so apps that restore their tabs do), with exceptions for apps you want to keep running. |
 | **Finder** | Return opens, F2 renames, Delete moves to the Trash, ⌫ goes back, Ctrl+X/Ctrl+V moves files. Visible extensions, folders first, folder sizes and more in one click (always reversible). |
 | **File Explorer** | A Windows-style file manager: address bar, columns with extension and size, previews, tabs. |
-| **Keyboard** | Ctrl+C/V/X/Z/A/S… like on a PC, Ctrl+arrows and Ctrl+⌫ by word, Home/End, right ⌘ as AltGr (@, #, €, [ ]), ⌥⇧S for a screen snip like Win+Shift+S, accented capitals (È, À, Ò…) with Caps Lock. Shortcuts can be recorded by pressing them, mouse buttons included. |
+| **Keyboard** | Ctrl+C/V/X/Z/A/S… like on a PC, Ctrl+arrows and Ctrl+⌫ by word, Home/End, right ⌘ as AltGr (@, #, €, [ ]), ⌥⇧S for a screen snip like Win+Shift+S (the screen freezes), accented capitals (È, À, Ò…) with Caps Lock, Ctrl + wheel to zoom. Shortcuts can be recorded by pressing them, mouse buttons included. |
 | **Notifications** | Notifications that slide in at the top center, with the app's color and the duration and style you like. |
 | **Wallpaper** | Right-click an image in the Finder → *Set as Desktop Picture*. |
 
@@ -94,7 +94,7 @@ Power and File Explorer are built as separate apps and placed inside `Toolbox.ap
 
 - **Events.** `EventTap` receives keys and clicks system-wide and hands them, in order, to: mouse-button shortcuts, Snap Assist and ⌥Z when open, show desktop, zone keys, snapping (⌥ + arrows), Finder keys, Ctrl shortcuts, screen snip, AltGr and text keys, and finally the switcher. The first feature that uses an event swallows it; if none does, the event reaches the app as usual. Heavy work happens outside the tap, on the main run loop.
 - **Windows.** Other apps' windows are read and moved through the Accessibility API (`Core/AXWindow.swift`, `Core/WindowManager.swift`); Toolbox's own windows through AppKit (`Core/WindowRef.swift`). Coordinates are CoreGraphics ones, with the origin at the top left; `Core/ScreenGeometry.swift` converts to and from AppKit's.
-- **Private APIs.** Few, and declared where they are used: `_AXUIElementGetWindow` (window ↔ CGWindowID), `CGSSetSymbolicHotKeyEnabled` (to turn off the system ⌘Tab while Toolbox runs, and back on when it quits) and the SkyLight functions in `Core/Spaces.swift` for desktops.
+- **Private APIs.** Few, and declared where they are used: `_AXUIElementGetWindow` (window ↔ CGWindowID), `CGSHWCaptureWindowList` (previews of minimized windows), `CGSSetSymbolicHotKeyEnabled` (to turn off the system ⌘Tab while Toolbox runs, and back on when it quits) and the SkyLight functions in `Core/Spaces.swift` for desktops.
 
 ### Adding a setting
 

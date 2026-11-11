@@ -14,9 +14,17 @@ enum PreviewStore {
     /// No input for this long → nothing on screen is changing because of the user: skip the capture.
     private static let idleAfter: TimeInterval = 60
 
+    /// The saved preview, or else what the window server still keeps of the window: minimized windows
+    /// (and windows on other desktops) keep their last content, so they have a preview even when
+    /// Toolbox wasn't running while they were open.
     static func image(for id: CGWindowID) -> NSImage? {
-        guard let entry = store[id], let image = NSImage(data: entry.jpeg) else { return nil }
-        image.size = entry.size
+        if let entry = store[id], let image = NSImage(data: entry.jpeg) {
+            image.size = entry.size
+            return image
+        }
+        guard Settings.backgroundPreviews, CGPreflightScreenCaptureAccess(),
+              let image = WindowServerCapture.window(id, maxSize: CGSize(width: 640, height: 420)) else { return nil }
+        set(image, for: id)
         return image
     }
 
@@ -75,5 +83,36 @@ enum PreviewStore {
         CGImageDestinationAddImage(dest, cg, [kCGImageDestinationLossyCompressionQuality: 0.8] as CFDictionary)
         guard CGImageDestinationFinalize(dest) else { return nil }
         return data as Data
+    }
+}
+
+/// Window images straight from the window server, for windows ScreenCaptureKit can't capture
+/// because they are not on screen (minimized, or on another desktop).
+private enum WindowServerCapture {
+    private typealias ConnectionID = UInt32
+    @_silgen_name("CGSMainConnectionID") private static func mainConnection() -> ConnectionID
+    @_silgen_name("CGSHWCaptureWindowList")
+    private static func capture(_ cid: ConnectionID, _ list: UnsafeMutablePointer<CGWindowID>, _ count: UInt32,
+                                _ options: UInt32) -> Unmanaged<CFArray>?
+
+    private static let ignoreGlobalClipShape: UInt32 = 1 << 11
+    private static let bestResolution: UInt32 = 1 << 8
+
+    /// The window's last content, scaled to fit `maxSize` (points, drawn at 2× for Retina).
+    static func window(_ id: CGWindowID, maxSize: CGSize) -> NSImage? {
+        var id = id
+        guard let list = capture(mainConnection(), &id, 1, ignoreGlobalClipShape | bestResolution)?
+                .takeRetainedValue() as? [CGImage],
+              let cg = list.first, cg.width > 1, cg.height > 1 else { return nil }
+        let full = CGSize(width: CGFloat(cg.width) / 2, height: CGFloat(cg.height) / 2)
+        let ratio = min(maxSize.width / full.width, maxSize.height / full.height, 1)
+        let size = CGSize(width: max(1, (full.width * ratio).rounded()), height: max(1, (full.height * ratio).rounded()))
+        guard let ctx = CGContext(data: nil, width: Int(size.width * 2), height: Int(size.height * 2), bitsPerComponent: 8,
+                                  bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
+        ctx.interpolationQuality = .high
+        ctx.draw(cg, in: CGRect(x: 0, y: 0, width: size.width * 2, height: size.height * 2))
+        guard let small = ctx.makeImage() else { return nil }
+        return NSImage(cgImage: small, size: size)
     }
 }
