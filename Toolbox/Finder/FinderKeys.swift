@@ -37,7 +37,8 @@ enum FinderKeys {
         let relevant = (plain && [ret, enter, f2, fwdDelete, backspace].contains(key))
             || (shift && !cmd && !ctrl && !alt && key == fwdDelete)
             || (shortcut && (key == x || key == v))
-        guard relevant, !TextKeys.isEditingText() else { return false }
+        // renaming a file or typing in the search field: the keys work as usual
+        guard relevant, !TextKeys.isEditingText(fieldsOnly: true) else { return false }
 
         switch key {
         case ret, enter:

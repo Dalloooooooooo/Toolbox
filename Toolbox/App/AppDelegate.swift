@@ -48,9 +48,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // update it stays quietly in the menu bar
         let firstLaunch = !UserDefaults.standard.bool(forKey: Pref.launchedBefore)
         UserDefaults.standard.set(true, forKey: Pref.launchedBefore)
-        if firstLaunch || !(launchedAsLoginItem || CommandLine.arguments.contains("--background")) {
+        let background = CommandLine.arguments.contains("--background")
+        let atLogin = launchedAsLoginItem || justLoggedIn
+        Log.info("launch: \(firstLaunch ? "first launch" : background ? "background" : atLogin ? "at login" : "by the user")")
+        if firstLaunch || !(atLogin || background) {
             settings.show()
         }
+    }
+
+    /// A safety net for the login-item check: macOS doesn't always say so (for example when it reopens the
+    /// apps that were open at shutdown). The Dock starts when you log in: if it started moments ago,
+    /// nobody opened Toolbox by hand. Opening it again from the Dock or Launchpad still shows the settings.
+    private var justLoggedIn: Bool {
+        guard let dock = NSRunningApplication.runningApplications(withBundleIdentifier: "com.apple.dock").first,
+              let started = Self.startDate(of: dock.processIdentifier) else { return false }
+        return Date().timeIntervalSince(started) < 90
+    }
+
+    /// When a process started, from the kernel (`launchDate` is empty for the Dock: launchd starts it).
+    private static func startDate(of pid: pid_t) -> Date? {
+        var info = kinfo_proc()
+        var size = MemoryLayout<kinfo_proc>.stride
+        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, pid]
+        guard sysctl(&mib, 4, &info, &size, nil, 0) == 0, size > 0 else { return nil }
+        let t = info.kp_proc.p_un.__p_starttime
+        guard t.tv_sec > 0 else { return nil }
+        return Date(timeIntervalSince1970: TimeInterval(t.tv_sec) + TimeInterval(t.tv_usec) / 1_000_000)
     }
 
     private var launchedAsLoginItem = false

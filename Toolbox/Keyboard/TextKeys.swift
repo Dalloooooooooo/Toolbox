@@ -110,12 +110,15 @@ enum TextKeys {
 
     /// Home/End must be rewritten only while typing: outside a text field, on the Mac (and on Windows)
     /// they scroll the page, while ⌘← in browsers would mean "previous page".
-    static func isEditingText() -> Bool {
+    /// `fieldsOnly`: only real text fields count. The Finder's desktop, for one, says it has a text selection
+    /// even when you have just selected a file on it.
+    static func isEditingText(fieldsOnly: Bool = false) -> Bool {
         if floatingTextField() != nil { return true }
         // ask the frontmost app: the "system-wide" query often doesn't respond
         guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier,
               let el = focusedElement(of: pid) else { return false }
         if isTextField(el) { return true }
+        if fieldsOnly { return false }
         var range: CFTypeRef?
         return AXUIElementCopyAttributeValue(el, kAXSelectedTextRangeAttribute as CFString, &range) == .success && range != nil
     }

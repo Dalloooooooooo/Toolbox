@@ -14,7 +14,8 @@ enum Pref {
 
     // Window snapping
     static let snapEnabled = "snapEnabled"
-    static let snapAssist = "snapAssist"
+    static let snapAssist = "snapAssist"             // old on/off, read only to carry it over
+    static let snapAssistMode = "snapAssistMode"     // AssistMode: every, empty, never
     static let snapLinkedResize = "snapLinkedResize"
     static let snapLayoutBar = "snapLayoutBar"
     static let snapNearEdge = "snapNearEdge"
@@ -36,7 +37,11 @@ enum Pref {
     static let zonesQuickSwitch = "zonesQuickSwitch"
     static let zonesFlash = "zonesFlash"
     static let zonesExcludedApps = "zonesExcludedApps"
-    static let zonesAssist = "zonesAssist"           // after dropping a window, suggest windows for the other zones
+    static let zonesSmart = "zonesSmart"                     // choose the layout from the number of open windows
+    static let zonesSmartLayouts = "zonesSmartLayouts"       // JSON: {"2": layout id, …}
+    static let zonesSmartIgnoredApps = "zonesSmartIgnoredApps" // apps whose windows don't count
+    static let zonesAssist = "zonesAssist"           // old on/off, read only to carry it over
+    static let zonesAssistMode = "zonesAssistMode"   // AssistMode: which zones Snap Assist asks about after a drop
 
     // Show desktop
     static let showDesktopShake = "showDesktopShake"

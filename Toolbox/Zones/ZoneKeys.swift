@@ -61,7 +61,7 @@ enum ZoneKeys {
             NSSound.beep(); return
         }
         let area = ScreenGeo.area(screen)
-        let frames = ZoneStore.shared.layout(for: screen).frames(in: area)
+        let frames = SmartZones.layout(for: screen, window: id).frames(in: area)
         let byPosition = ZoneSettings.keysByPosition
         guard !frames.isEmpty, !ZoneSettings.isExcluded(pid: w.pid), byPosition || a == .left || a == .right else {
             if SnapSettings.enabled && SnapSettings.keys { WindowSnap.shared.arrow(a, shift: false) }

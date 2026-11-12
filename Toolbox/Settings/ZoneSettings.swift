@@ -13,7 +13,8 @@ enum ZoneSettings {
     static var keysByPosition: Bool { flag(Pref.zonesKeysByPosition, false) }
     static var quickSwitch: Bool { flag(Pref.zonesQuickSwitch) }
     static var flash: Bool { flag(Pref.zonesFlash) }
-    static var assist: Bool { flag(Pref.zonesAssist) }
+    static var smart: Bool { flag(Pref.zonesSmart, false) }
+    static var assist: AssistMode { AssistMode.read(Pref.zonesAssistMode, old: Pref.zonesAssist) }
     /// Apps whose windows never snap to zones (bundle identifiers).
     static var excludedApps: [String] {
         get { d.stringArray(forKey: Pref.zonesExcludedApps) ?? [] }

@@ -14,6 +14,16 @@ final class ZoneDrag {
 
     private var current: (screen: NSScreen, frames: [CGRect], lit: Set<Int>)?
     private var anchor: (screen: String, zones: Set<Int>)? // where spanning (⌃) started
+    /// Smart layouts: chosen once per monitor when the zones appear, so they don't change mid-drag.
+    private var layouts: [String: ZoneLayout] = [:]
+
+    private func layout(_ screen: NSScreen, _ window: CGWindowID) -> ZoneLayout {
+        let key = ZoneStore.key(for: screen)
+        if let l = layouts[key] { return l }
+        let l = SmartZones.layout(for: screen, window: window)
+        layouts[key] = l
+        return l
+    }
 
     /// True if zones are showing: edge snapping stands aside meanwhile.
     func update(pid: pid_t, window: CGWindowID) -> Bool {
@@ -23,9 +33,10 @@ final class ZoneDrag {
               !ZoneSettings.isExcluded(pid: pid) else { stop(); return false }
         let m = ScreenGeo.mouse
         guard let screen = ScreenGeo.screen(at: m) else { stop(); return false }
-        let frames = ZoneStore.shared.layout(for: screen).frames(in: ScreenGeo.area(screen))
+        let layout = layout(screen, window)
+        let frames = layout.frames(in: ScreenGeo.area(screen))
         guard !frames.isEmpty else { stop(); return false } // "No layout": normal snapping
-        var lit = Self.zones(at: m, in: frames, sensitivity: CGFloat(ZoneStore.shared.layout(for: screen).sensitivity))
+        var lit = Self.zones(at: m, in: frames, sensitivity: CGFloat(layout.sensitivity))
         let key = ZoneStore.key(for: screen)
         if flags.contains(.maskControl), !lit.isEmpty {
             if anchor?.screen != key { anchor = (key, lit) }
@@ -37,7 +48,7 @@ final class ZoneDrag {
         var shown = [(screen: screen, frames: frames, lit: lit)]
         if ZoneSettings.allMonitors {
             for s in NSScreen.screens where s != screen {
-                let f = ZoneStore.shared.layout(for: s).frames(in: ScreenGeo.area(s))
+                let f = self.layout(s, window).frames(in: ScreenGeo.area(s))
                 if !f.isEmpty { shown.append((s, f, [])) }
             }
         }
@@ -56,6 +67,12 @@ final class ZoneDrag {
     }
 
     var isShowing: Bool { current != nil }
+
+    /// The drag is over: the next one counts the windows again.
+    func finish() {
+        layouts = [:]
+        stop()
+    }
 
     func stop() {
         guard current != nil else { return }

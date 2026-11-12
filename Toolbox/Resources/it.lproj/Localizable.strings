@@ -498,3 +498,19 @@
 "Ctrl + mouse wheel zooms in and out" = "Ctrl + rotellina del mouse ingrandisce e riduce";
 "Like on Windows, in the apps that can zoom: browsers, PDFs and images in Preview, Photos, Maps… Elsewhere the wheel scrolls as usual." = "Come su Windows, nelle app che possono fare lo zoom: browser, PDF e immagini in Anteprima, Foto, Mappe… Altrove la rotellina scorre come sempre.";
 "goes back · on the desktop, moves to the Trash" = "torna indietro · sulla scrivania, sposta nel Cestino";
+"In every other zone" = "In tutte le altre zone";
+"Only in empty zones" = "Solo nelle zone vuote";
+"Never" = "Mai";
+"After dropping a window on a zone, suggest windows" = "Dopo aver messo una finestra in una zona, proponi le finestre";
+"After snapping a window, suggest what to snap next to it" = "Dopo aver affiancato una finestra, proponi cosa affiancarle";
+"Smart layouts" = "Layout automatici";
+"Choose the layout based on the open windows" = "Scegli il layout in base alle finestre aperte";
+"The monitor's layout" = "Il layout del monitor";
+"When you start dragging, Toolbox counts the windows open on that monitor (the one you drag included; not minimized ones) and uses the layout chosen for that number. Columns, rows, grids and the other templates get one zone per window." = "Quando inizi a trascinare, Toolbox conta le finestre aperte su quel monitor (compresa quella che trascini, non quelle ridotte a icona) e usa il layout scelto per quel numero. Colonne, righe, griglie e gli altri modelli hanno una zona per ogni finestra.";
+"1 window" = "1 finestra";
+"%lld windows" = "%lld finestre";
+"%lld or more windows" = "%lld o più finestre";
+"Don't count these apps" = "Non contare queste app";
+"Their windows can still go into zones, they just don't count when choosing the layout. Useful for small windows, like the Calculator or System Settings." = "Le loro finestre si possono comunque mettere nelle zone, solo non contano per scegliere il layout. Utile per le finestre piccole, come la Calcolatrice o Impostazioni di Sistema.";
+"Every app counts." = "Contano tutte le app.";
+

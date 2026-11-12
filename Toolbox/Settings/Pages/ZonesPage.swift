@@ -12,7 +12,8 @@ struct ZonesPage: View {
     @AppStorage(Pref.zonesKeysByPosition) private var byPosition = false
     @AppStorage(Pref.zonesQuickSwitch) private var quickSwitch = true
     @AppStorage(Pref.zonesFlash) private var flash = true
-    @AppStorage(Pref.zonesAssist) private var assist = true
+    @AppStorage(Pref.zonesSmart) private var smart = false
+    @AppStorage(Pref.zonesAssistMode) private var assist = AssistMode.read(Pref.zonesAssistMode, old: Pref.zonesAssist).rawValue
 
     private var color: Binding<Color> {
         Binding(get: { Color(hex: colorHex) ?? .accentColor }, set: { colorHex = $0.hex })
@@ -37,7 +38,18 @@ struct ZonesPage: View {
                                    : "Zones appear whenever you drag a window; hold ⇧ to drag it freely or to snap it to the screen edges. Hold ⌃ to span several zones.")
                         .font(.callout).foregroundStyle(.secondary)
                     Toggle("Show zones on all monitors while dragging", isOn: $allMonitors)
-                    Toggle("When I drop a window on a zone, suggest what to put in the other zones", isOn: $assist)
+                    Picker("After dropping a window on a zone, suggest windows", selection: $assist) {
+                        ForEach(AssistMode.allCases) { Text($0.label).tag($0.rawValue) }
+                    }
+                }
+                SmartLayoutsSection(smart: $smart)
+                if smart {
+                    AppListSection(
+                        header: "Don't count these apps",
+                        footer: "Their windows can still go into zones, they just don't count when choosing the layout. Useful for small windows, like the Calculator or System Settings.",
+                        empty: "Every app counts.",
+                        load: { SmartZones.ignoredApps },
+                        save: { SmartZones.ignoredApps = $0 })
                 }
                 Section("Appearance") {
                     Toggle("Show zone numbers", isOn: $showNumbers)
@@ -76,3 +88,43 @@ struct ZonesPage: View {
         .onChange(of: enabled) { _, on in if !on { ZoneOverlay.shared.hide() } }
     }
 }
+
+/// Smart layouts: one layout for each number of open windows.
+private struct SmartLayoutsSection: View {
+    @Binding var smart: Bool
+    @ObservedObject private var store = ZoneStore.shared
+    @State private var chosen = SmartZones.layouts
+
+    var body: some View {
+        Section("Smart layouts") {
+            Toggle("Choose the layout based on the open windows", isOn: $smart)
+            if smart {
+                ForEach(SmartZones.counts, id: \.self) { n in
+                    Picker(label(n), selection: binding(n)) {
+                        Text("The monitor's layout").tag(UUID?.none)
+                        Divider()
+                        ForEach(store.layouts) { Text($0.displayName).tag(UUID?.some($0.id)) }
+                    }
+                }
+            }
+            Text("When you start dragging, Toolbox counts the windows open on that monitor (the one you drag included; not minimized ones) and uses the layout chosen for that number. Columns, rows, grids and the other templates get one zone per window.")
+                .font(.callout).foregroundStyle(.secondary)
+        }
+    }
+
+    private func label(_ n: Int) -> String {
+        switch n {
+        case 1: String(localized: "1 window")
+        case SmartZones.counts.last!: String(localized: "\(n) or more windows")
+        default: String(localized: "\(n) windows")
+        }
+    }
+
+    private func binding(_ n: Int) -> Binding<UUID?> {
+        Binding(get: { chosen[n] }, set: { id in
+            chosen[n] = id
+            SmartZones.layouts = chosen
+        })
+    }
+}
+

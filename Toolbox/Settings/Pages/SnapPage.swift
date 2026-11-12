@@ -4,7 +4,7 @@ import SwiftUI
 struct SnapPage: View {
     @AppStorage(Pref.snapEnabled) private var enabled = true
     @AppStorage(Pref.snapLayoutBar) private var layoutBar = true
-    @AppStorage(Pref.snapAssist) private var assist = true
+    @AppStorage(Pref.snapAssistMode) private var assist = AssistMode.read(Pref.snapAssistMode, old: Pref.snapAssist).rawValue
     @AppStorage(Pref.snapLinkedResize) private var linked = true
     @AppStorage(Pref.snapNearEdge) private var nearEdge = true
     @AppStorage(Pref.snapKeys) private var keys = true
@@ -34,7 +34,9 @@ struct SnapPage: View {
             }
             Section("Like on Windows 11") {
                 Toggle("Show layouts when I drag a window to the top of the screen", isOn: $layoutBar)
-                Toggle("When I snap a window, suggest what to snap next to it", isOn: $assist)
+                Picker("After snapping a window, suggest what to snap next to it", selection: $assist) {
+                    ForEach(AssistMode.allCases) { Text($0.label).tag($0.rawValue) }
+                }
                 Toggle("When I resize a snapped window, also resize adjacent snapped windows", isOn: $linked)
                 Toggle("Snap without dragging all the way to the screen edge", isOn: $nearEdge)
                 Toggle("Animate windows when they snap, maximize or restore", isOn: $animate)

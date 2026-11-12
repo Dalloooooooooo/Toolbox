@@ -22,7 +22,6 @@ final class SnapAssist: ObservableObject {
     private var slot = Slot(zone: .right, frame: .zero, label: "")
     private var area: CGRect = .zero
     private var used: Set<CGWindowID> = []
-    private var replacing = false // offering zones that are already taken
     private var layoutFrames: [CGRect] = []
 
     /// Windows that are part of the layout being filled: snapped, still in place, exactly in one of its zones.
@@ -47,17 +46,19 @@ final class SnapAssist: ObservableObject {
 
     /// After a window has been placed in zone `placed` of `layout`: offers the layout's zones that are still free.
     func offer(layout: SnapLayout, placed: Int, area: CGRect, excluding id: CGWindowID) {
-        guard SnapSettings.assist else { return }
+        let mode = SnapSettings.assist
+        guard mode != .never else { return }
         let n = layout.zones.count
         let order = (1..<max(1, n)).map { layout.zones[(placed + $0) % n] }
         start(order.map { Slot(zone: $0, frame: $0.frame(in: area), label: $0.label) }, area: area, excluding: id,
-              layout: layout.zones.map { $0.frame(in: area) })
+              layout: layout.zones.map { $0.frame(in: area) }, emptyOnly: mode == .empty)
     }
 
     /// After a window has been dropped on zones `placed` of a zone layout (`frames`, numbered from 1):
     /// offers the other zones, the ones after it first. Zones overlapping where the window went are skipped.
     func offer(zoneFrames frames: [CGRect], placed: Set<Int>, area: CGRect, excluding id: CGWindowID) {
-        guard ZoneSettings.assist, let last = placed.max() else { return }
+        let mode = ZoneSettings.assist
+        guard mode != .never, let last = placed.max() else { return }
         let taken = placed.map { frames[$0] }.reduce(CGRect.null) { $0.union($1) }
         let n = frames.count
         let order = (1..<max(1, n)).map { (last + $0) % n }.filter { i in
@@ -69,45 +70,46 @@ final class SnapAssist: ObservableObject {
                               width: f.width / area.width, height: f.height / area.height)
             return Slot(zone: SnapZone(unit: unit), frame: f, label: String(localized: "zone \(i + 1)"))
         }
-        start(slots, area: area, excluding: id, layout: frames)
+        start(slots, area: area, excluding: id, layout: frames, emptyOnly: mode == .empty)
     }
 
     /// `layout`: every zone of the layout being filled, to tell which windows are already part of it.
-    private func start(_ order: [Slot], area: CGRect, excluding id: CGWindowID, layout: [CGRect]) {
+    private func start(_ order: [Slot], area: CGRect, excluding id: CGWindowID, layout: [CGRect], emptyOnly: Bool) {
         guard !order.isEmpty else { Log.info("Snap Assist: no other zones to fill"); return }
         self.area = area
         layoutFrames = layout
         used = [id]
-        pending = order.filter { isFree($0, ignoring: id) }
-        // the other zones are all taken (e.g. a window snapped next to one already snapped): ask anyway,
-        // to replace what's there; clicking elsewhere or Esc leaves everything as it is
-        replacing = pending.isEmpty
-        if replacing { pending = order }
+        // every other zone is asked, one after the other, also the ones that already have a window
+        // (it's offered first, so Return keeps it), unless the setting says only the empty ones;
+        // clicking elsewhere or Esc leaves the rest as it is
+        pending = emptyOnly ? order.filter { occupant(of: $0) == nil } : order
+        guard !pending.isEmpty else { Log.info("Snap Assist: every other zone is taken"); return }
         quietUntil = Date().addingTimeInterval(0.6)
         next()
     }
 
-    /// A zone is free unless a window of the layout is already in it.
-    private func isFree(_ z: Slot, ignoring id: CGWindowID) -> Bool {
-        !WindowSnap.shared.snapped.keys.contains { k in
-            k != id && inLayout(k).map { $0.frame.distance(to: z.frame) < 12 } == true
+    /// The window of the layout that is in that zone, if any.
+    private func occupant(of z: Slot) -> CGWindowID? {
+        WindowSnap.shared.snapped.keys.first { k in
+            !used.contains(k) && inLayout(k).map { $0.frame.distance(to: z.frame) < 12 } == true
         }
     }
 
     private func next() {
         guard let z = pending.first else { dismiss(); return }
         pending.removeFirst()
-        guard replacing || isFree(z, ignoring: 0) else { next(); return }
         slot = z
-        // windows already in the layout are not offered again, unless every zone is taken: then Snap Assist
-        // still asks (you may want to swap them), offering also the windows that are already there
-        let placedHere = replacing ? [] : Set(WindowSnap.shared.snapped.keys.filter { inLayout($0) != nil })
-        let list = WindowManager.listWindows()
-            .filter { !used.contains($0.id) && !placedHere.contains($0.id) }
+        // the window already in this zone first; then the windows that aren't part of the layout
+        // (the ones in its other zones stay where they are)
+        let current = occupant(of: z)
+        let inOtherZones = Set(WindowSnap.shared.snapped.keys.filter { $0 != current && inLayout($0) != nil })
+        let offered = WindowManager.listWindows()
+            .filter { !used.contains($0.id) && !inOtherZones.contains($0.id) }
             .filter { $0.state == .normal || $0.state == .minimized || $0.state == .hidden }
+        let list = offered.filter { $0.id == current } + offered.filter { $0.id != current }
         guard !list.isEmpty else {
-            Log.info("Snap Assist: no windows to offer (\(placedHere.count) already in the layout)")
-            dismiss()
+            Log.info("Snap Assist: no windows to offer for \(z.label) (\(inOtherZones.count) in the other zones)")
+            next()
             return
         }
         candidates = list.map { Candidate(info: $0) }

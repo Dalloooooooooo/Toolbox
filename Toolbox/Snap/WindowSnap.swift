@@ -60,7 +60,10 @@ final class WindowSnap {
         SnapAssist.shared.mouseDown(at: p)
         LayoutFlyout.shared.mouseDown(at: p)
         guard SnapSettings.enabled || ZoneSettings.enabled || Settings.aeroShake else { return }
-        DispatchQueue.main.async { self.begin(at: p) }
+        DispatchQueue.main.async {
+            ZoneDrag.shared.finish() // a new drag: smart layouts count the windows again
+            self.begin(at: p)
+        }
     }
 
     func mouseUp() {
@@ -252,7 +255,7 @@ final class WindowSnap {
         }
         let release = ScreenGeo.mouse
         if mode == .moving, let z = ZoneDrag.shared.target {
-            ZoneDrag.shared.stop()
+            ZoneDrag.shared.finish()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 self.place(z.frame, zone: SnapZone(unit: z.unit), to: w, id: id, area: z.area, restore: start)
                 // like Snap Assist: the other open windows for the remaining zones
@@ -260,7 +263,7 @@ final class WindowSnap {
             }
             return
         }
-        ZoneDrag.shared.stop()
+        ZoneDrag.shared.finish()
         if mode == .undecided, !onEdge, SnapSettings.enabled, hypot(release.x - grabPoint.x, release.y - grabPoint.y) > 10 {
             // thrown and dropped at once: macOS hasn't moved the window yet, look again in a moment
             let grab = grabX
@@ -313,11 +316,23 @@ final class WindowSnap {
             s.frame.intersection(target).area > 0.5 * min(s.frame.area, target.area) {
             snapped.removeValue(forKey: other)
         }
-        WindowAnimator.move(w, to: target) { [weak self] in
-            // apps may round the size (e.g. to whole text lines): record where it really is
-            if let f = w.frame, self?.snapped[id]?.frame == target { self?.snapped[id]?.frame = f }
-            self?.keepInPlace(w, id: id, target: target)
+        WindowAnimator.move(w, to: target) { [weak self] in self?.settle(w, id: id, target: target, attempt: 0) }
+    }
+
+    /// Some apps (the Finder, for one) apply a new size a moment later, or skip one sent during the animation:
+    /// if the window isn't there yet, set it again. Only what is left after that is the app's own rounding
+    /// (e.g. to whole text lines), and the window is recorded where it really is.
+    private func settle(_ w: WindowRef, id: CGWindowID, target: CGRect, attempt: Int) {
+        guard snapped[id]?.frame == target, !WindowAnimator.isAnimating(id) else { return }
+        if attempt < 2, let f = w.frame, f.distance(to: target) > 2 {
+            w.setFrame(target)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in
+                self?.settle(w, id: id, target: target, attempt: attempt + 1)
+            }
+            return
         }
+        if let f = w.frame { snapped[id]?.frame = f }
+        keepInPlace(w, id: id, target: target)
     }
 
     /// If something else moves the window right afterwards (e.g. macOS tiling still active),
