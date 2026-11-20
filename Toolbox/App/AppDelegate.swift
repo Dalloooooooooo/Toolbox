@@ -17,6 +17,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             UserDefaults.standard.removeObject(forKey: Pref.reRegisterLogin)
             try? SMAppService.mainApp.register()
         }
+        // settings left by a helper app that older versions included
+        UserDefaults.standard.removePersistentDomain(forName: "it.saind.toolbox.explorer")
         WindowManager.startTracking()
         PreviewStore.startBackgroundRefresh()
         CtrlScrollZoom.start()

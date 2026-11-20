@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">Toolbox</h1>
-<p align="center">Le abitudini di Windows portate su macOS: Alt+Tab con le anteprime, finestre affiancate, Esplora file, tasti e scorciatoie come su PC.</p>
+<p align="center">Le abitudini di Windows portate su macOS: Alt+Tab con le anteprime, finestre affiancate, zone, tasti e scorciatoie come su PC.</p>
 
 <p align="center"><a href="README.md">English</a> · <b>Italiano</b></p>
 
@@ -29,7 +29,6 @@
 | **Power** | Un tasto di accensione nel Dock: blocca, standby, spegni lo schermo, riavvia, spegni, con timer. |
 | **Chiusura app** | Chiudendo l'ultima finestra l'app esce davvero (come ⌘Q, quindi le app che ripristinano le schede lo fanno), con un elenco di eccezioni per le app da tenere aperte. |
 | **Finder** | Invio apre, F2 rinomina, Canc cestina, ⌫ torna indietro (sulla scrivania cestina anche lui), Ctrl+X/Ctrl+V sposta. Estensioni visibili, cartelle prima dei file, dimensioni delle cartelle e altre impostazioni in un clic (sempre ripristinabili). |
-| **Esplora file** | Un esploratore di file in stile Windows: barra degli indirizzi, colonne con estensione e dimensioni, anteprime, schede. |
 | **Tastiera** | Ctrl+C/V/X/Z/A/S… come su PC, Ctrl+frecce e Ctrl+⌫ sulle parole, Home/Fine, ⌘ destro come AltGr (@, #, €, [ ]), ⌥⇧S per il ritaglio dello schermo come Win+Maiusc+S (lo schermo si congela), maiuscole accentate (È, À, Ò…) con il Blocco maiuscole, Ctrl + rotellina per lo zoom. Le scorciatoie si registrano premendole, anche con i tasti del mouse. |
 | **Notifiche** | Notifiche che scendono dall'alto al centro, con il colore dell'app, la durata e lo stile che preferisci. |
 | **Sfondo** | Tasto destro su un'immagine nel Finder → *Imposta come sfondo*. |
@@ -82,7 +81,6 @@ Toolbox/                 l'app principale (barra dei menu)
   Diagnostics/           registro, chiusure inaspettate, segnalazione dei problemi
   Resources/             Info.plist e icona
 Power/                   app di supporto: il tasto di accensione nel Dock
-Explorer/                app di supporto: Esplora file (File Explorer.app; App, Model, Views)
 Shared/                  codice usato da più app: nomi delle preferenze, varianti dell'icona Power
 Artwork/                 disegni originali delle icone
 scripts/                 compilazione, pubblicazione, generazione delle icone
@@ -90,7 +88,7 @@ scripts/                 compilazione, pubblicazione, generazione delle icone
 
 Il codice e i testi di base sono in inglese; la traduzione italiana è in `*/Resources/it.lproj/Localizable.strings`. Per aggiungere una lingua basta una cartella `<codice>.lproj` con i file tradotti, più il codice in `CFBundleLocalizations` (Info.plist) e in `AppLanguage`.
 
-Power ed Esplora file vengono compilate come app separate e messe dentro `Toolbox.app/Contents/Helpers`: hanno una propria icona nel Dock.
+Power viene compilata come app separata e messa dentro `Toolbox.app/Contents/Helpers`: ha una propria icona nel Dock.
 
 ### Come funziona
 

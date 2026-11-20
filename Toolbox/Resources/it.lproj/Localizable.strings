@@ -295,7 +295,7 @@
 "Text size" = "Dimensione testo";
 "The color is taken from the app's icon (e.g. green for Messages, blue for Mail). Apps with a gray icon stay uncolored. The timer bar takes the same color too." = "Il colore viene preso dall'icona dell'app (es. verde per Messaggi, blu per Mail). Le app con icona grigia restano senza colore. Anche la barra del tempo prende lo stesso colore.";
 "The downloaded zip is damaged." = "Lo zip scaricato è danneggiato.";
-"The Finder hasn't been set up like File Explorer yet" = "Il Finder non è ancora stato impostato come Esplora risorse";
+"The Finder hasn't been set up like Windows File Explorer yet" = "Il Finder non è ancora stato impostato come Esplora risorse";
 "The Finder itself carries out every operation (with its own progress bar, the prompt to replace files, and Undo). While you rename or type in a field, the keys work as usual." = "È il Finder stesso a fare ogni operazione (con la sua barra di avanzamento, la domanda se sostituire i file e Annulla). Mentre rinomini o scrivi in un campo, i tasti restano quelli normali.";
 "The GitHub repository isn't configured yet." = "Il repository GitHub non è ancora configurato.";
 "The new language takes effect after Toolbox restarts." = "La nuova lingua si vede dopo il riavvio di Toolbox.";
@@ -345,7 +345,7 @@
 "Updates" = "Aggiornamenti";
 "Updating is recommended." = "Si consiglia di aggiornare.";
 "Use Ctrl instead of ⌘ for the main shortcuts" = "Usa Ctrl al posto di ⌘ per le scorciatoie principali";
-"Use File Explorer keys in the Finder" = "Usa i tasti di Esplora risorse nel Finder";
+"Use Windows File Explorer keys in the Finder" = "Usa i tasti di Esplora risorse nel Finder";
 "Use Italian – Pro" = "Usa Italiano – Pro";
 "Use right ⌘ as the Windows AltGr key" = "Usa ⌘ destro come il tasto AltGr di Windows";
 "Version" = "Versione";

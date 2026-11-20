@@ -1,7 +1,7 @@
 import Foundation
 
 /// Interface language: the system one, or one chosen in settings.
-/// Applies to Toolbox and its helper apps (Power, File Explorer); takes effect after a restart.
+/// Applies to Toolbox and its helper app (Power); takes effect after a restart.
 enum AppLanguage: String, CaseIterable, Identifiable {
     case system, english = "en", italian = "it"
     var id: String { rawValue }
@@ -16,7 +16,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     }
 
     private static let domains = [Bundle.main.bundleIdentifier ?? "it.saind.switchtab",
-                                  "it.saind.toolbox.power", "it.saind.toolbox.explorer"]
+                                  "it.saind.toolbox.power"]
 
     /// The current choice (read only from Toolbox's preferences, not from the global system ones).
     static var current: AppLanguage {

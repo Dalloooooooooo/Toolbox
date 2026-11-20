@@ -57,6 +57,12 @@ enum PreviewStore {
         WindowManager.capturePreviews(ids: ids, maxSize: TileMetrics.current.preview) { id, img in set(img, for: id) }
     }
 
+    /// Drops one preview (e.g. caught while the window was being minimized): next time the window server's
+    /// copy of the minimized window is used instead.
+    static func forget(_ id: CGWindowID) {
+        store[id] = nil
+    }
+
     /// Drops the previews of windows that have been closed, so memory doesn't grow over time.
     static func pruneClosedWindows() {
         guard !store.isEmpty,

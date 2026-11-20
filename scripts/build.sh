@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Builds Toolbox.app (with Power.app and File Explorer.app inside), signs it and installs it in ~/Applications.
+# Builds Toolbox.app (with Power.app inside), signs it and installs it in ~/Applications.
 #
 #   scripts/build.sh                 build for this Mac, install and launch
 #   NO_INSTALL=1 scripts/build.sh    build only (build/Toolbox.app)
@@ -77,17 +77,11 @@ if [[ ! -f Power/Resources/PowerIcon.icns || ! -f Power/Resources/PowerBase.png 
   sips -z 512 512 "$BUILD/power.png" --out Power/Resources/PowerBase.png >/dev/null # base for the color variants
   make_icns "$BUILD/power.png" Power/Resources/PowerIcon.icns
 fi
-if [[ ! -f Explorer/Resources/ExplorerIcon.icns ]]; then
-  if [[ -f Artwork/explorer-source.png ]]; then cp Artwork/explorer-source.png "$BUILD/explorer.png"
-  else swift scripts/icons/MakeFolderIcon.swift "$BUILD/explorer.png"; fi
-  make_icns "$BUILD/explorer.png" Explorer/Resources/ExplorerIcon.icns
-fi
 
 # MARK: - Apps
 
 rm -rf "$APP"
 POWER="$APP/Contents/Helpers/Power.app"
-EXPLORER="$APP/Contents/Helpers/File Explorer.app"
 
 bundle "$APP" Toolbox/Resources
 compile "$APP/Contents/MacOS/Toolbox" Cocoa,ScreenCaptureKit,ServiceManagement,SwiftUI,Carbon,SkyLight Toolbox Shared
@@ -95,18 +89,15 @@ compile "$APP/Contents/MacOS/Toolbox" Cocoa,ScreenCaptureKit,ServiceManagement,S
 bundle "$POWER" Power/Resources
 compile "$POWER/Contents/MacOS/Power" Cocoa Power Shared
 
-bundle "$EXPLORER" Explorer/Resources
-compile "$EXPLORER/Contents/MacOS/Explorer" Cocoa,SwiftUI,QuickLookThumbnailing,Quartz Explorer
-
 # nested bundles first, then the one that contains them
-sign "$POWER"; sign "$EXPLORER"; sign "$APP"
+sign "$POWER"; sign "$APP"
 echo "Built: $APP ($ARCHS)"
 
 [[ -n "${NO_INSTALL:-}" ]] && exit 0
 
 # MARK: - Install
 
-pkill -x Toolbox || true; pkill -x Power || true; pkill -x Explorer || true
+pkill -x Toolbox || true; pkill -x Power || true
 rm -rf ~/Applications/Toolbox.app
 mkdir -p ~/Applications
 cp -R "$APP" ~/Applications/

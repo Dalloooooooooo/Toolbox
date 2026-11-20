@@ -247,8 +247,7 @@ final class ItemView: NSView {
 
     private static func badge(for state: WindowState) -> (symbol: String, color: NSColor, tip: String)? {
         switch state {
-        case .normal: nil
-        case .minimized: ("minus.circle.fill", .systemYellow, String(localized: "Minimized to the Dock"))
+        case .normal, .minimized: nil // like Windows' Alt+Tab, minimized windows look like the others
         case .hidden: ("eye.slash.circle.fill", .systemGray, String(localized: "App hidden"))
         case .fullscreen: ("arrow.up.left.and.arrow.down.right.circle.fill", .systemGreen, String(localized: "Full screen"))
         case .otherDesktop: ("square.stack.3d.up.fill", .systemBlue, String(localized: "On another desktop"))

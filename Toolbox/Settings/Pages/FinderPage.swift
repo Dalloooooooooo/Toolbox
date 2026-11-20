@@ -11,7 +11,7 @@ struct FinderPage: View {
         Form {
             if !applied {
                 Section {
-                    Label("The Finder hasn't been set up like File Explorer yet", systemImage: "folder.badge.gearshape")
+                    Label("The Finder hasn't been set up like Windows File Explorer yet", systemImage: "folder.badge.gearshape")
                         .font(.headline)
                     Text("Visible extensions, folders before files, path bar, folder sizes and the other settings below. The Finder restarts for a moment; you can always go back to how it was.")
                         .font(.callout).foregroundStyle(.secondary)
@@ -23,7 +23,7 @@ struct FinderPage: View {
                 }
             }
             Section("Windows keys in the Finder") {
-                Toggle("Use File Explorer keys in the Finder", isOn: $finderKeys)
+                Toggle("Use Windows File Explorer keys in the Finder", isOn: $finderKeys)
                 Group {
                     LabeledContent("Return") { Text("opens the file or folder") }
                     LabeledContent("F2") { Text("renames") }

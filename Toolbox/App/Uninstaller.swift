@@ -6,7 +6,7 @@ import ServiceManagement
 /// user's files.
 enum Uninstaller {
     static let bundleIDs = [Bundle.main.bundleIdentifier ?? "it.saind.switchtab",
-                            "it.saind.toolbox.power", "it.saind.toolbox.explorer"]
+                            "it.saind.toolbox.power"]
 
     static func confirmAndUninstall() {
         let alert = NSAlert()

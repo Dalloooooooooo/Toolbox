@@ -44,11 +44,37 @@ enum WindowManager {
                 .sorted { (rank($0.element.pid), $0.offset) < (rank($1.element.pid), $1.offset) }
                 .map(\.element)
         }
+        let background = backgroundWindows()
+        markMinimizing(&result, background)
         if Settings.showMinimized {
             let seen = Set(result.map(\.id))
-            result += backgroundWindows().filter { !seen.contains($0.id) }
+            result += background.filter { !seen.contains($0.id) }
+        } else {
+            result.removeAll { $0.state == .minimized }
         }
         return result
+    }
+
+    /// A window being minimized is still on screen for a moment, shrinking into the Dock: it's minimized already
+    /// (so it isn't captured mid-animation, and it sits with the other minimized windows).
+    private static func markMinimizing(_ result: inout [WindowInfo], _ background: [WindowInfo]) {
+        let minimized = Set(background.filter { $0.state == .minimized }.map(\.id))
+        for i in result.indices where result[i].state == .normal && minimized.contains(result[i].id) {
+            result[i].state = .minimized
+        }
+    }
+
+    /// Is the window minimized (or on its way to the Dock)?
+    static func isMinimized(_ id: CGWindowID, pid: pid_t) -> Bool {
+        let axApp = AXUIElementCreateApplication(pid)
+        var value: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(axApp, kAXWindowsAttribute as CFString, &value) == .success,
+              let wins = value as? [AXUIElement] else { return false }
+        for win in wins {
+            var wid: CGWindowID = 0
+            if _AXUIElementGetWindow(win, &wid) == .success, wid == id { return boolAttr(win, kAXMinimizedAttribute) }
+        }
+        return false
     }
 
     /// Windows on other desktops, including full-screen apps.
@@ -83,8 +109,10 @@ enum WindowManager {
             let seen = Set(result.map(\.id))
             result += otherDesktopWindows().filter { $0.pid == pid && !seen.contains($0.id) }
         }
+        let background = backgroundWindows(only: pid)
+        markMinimizing(&result, background)
         let seen = Set(result.map(\.id))
-        result += backgroundWindows(only: pid).filter { !seen.contains($0.id) }
+        result += background.filter { !seen.contains($0.id) }
         return result
     }
 
@@ -251,13 +279,40 @@ enum WindowManager {
                         cfg.ignoreShadowsSingleWindow = true
                         let filter = SCContentFilter(desktopIndependentWindow: scw)
                         guard let cg = try? await SCScreenshotManager.captureImage(contentFilter: filter,
-                                                                                   configuration: cfg) else { return }
+                                                                                   configuration: cfg),
+                              !looksMidAnimation(cg) else { return }
                         let img = NSImage(cgImage: cg, size: NSSize(width: CGFloat(cg.width) / scale,
                                                                     height: CGFloat(cg.height) / scale))
-                        await MainActor.run { handler(id, img) }
+                        let pid = scw.owningApplication?.processID ?? 0
+                        await MainActor.run {
+                            // captured while shrinking into the Dock: not a picture of the window
+                            guard !isMinimized(id, pid: pid) else { return }
+                            handler(id, img)
+                            // minimized right after: the animation may already have started in the picture
+                            // (macOS marks the window as minimized only once it has reached the Dock)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                if isMinimized(id, pid: pid) { PreviewStore.forget(id) }
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+
+    /// A window shrinking into the Dock (or growing out of it) is distorted: parts along its edges are empty.
+    /// A real window is filled up to its edges (only the rounded corners are transparent).
+    nonisolated static func looksMidAnimation(_ image: CGImage) -> Bool {
+        let n = 32
+        var pixels = [UInt8](repeating: 0, count: n * n * 4)
+        guard let ctx = CGContext(data: &pixels, width: n, height: n, bitsPerComponent: 8, bytesPerRow: n * 4,
+                                  space: CGColorSpaceCreateDeviceRGB(),
+                                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
+        ctx.draw(image, in: CGRect(x: 0, y: 0, width: n, height: n))
+        // points just inside the edges, away from the corners
+        let near = 1, far = n - 2
+        let points = [(n / 4, near), (n / 2, near), (3 * n / 4, near), (n / 4, far), (n / 2, far), (3 * n / 4, far),
+                      (near, n / 4), (near, n / 2), (near, 3 * n / 4), (far, n / 4), (far, n / 2), (far, 3 * n / 4)]
+        return points.contains { x, y in pixels[(y * n + x) * 4 + 3] < 13 } // almost fully transparent
     }
 }

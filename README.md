@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">Toolbox</h1>
-<p align="center">Windows habits on macOS: Alt+Tab with previews, window snapping, a real file explorer, PC-style keys and shortcuts.</p>
+<p align="center">Windows habits on macOS: Alt+Tab with previews, window snapping, zones, PC-style keys and shortcuts.</p>
 
 <p align="center"><b>English</b> · <a href="README.it.md">Italiano</a></p>
 
@@ -29,7 +29,6 @@
 | **Power** | A power button in the Dock: lock, sleep, turn off the display, restart, shut down, with a timer. |
 | **Quitting apps** | Closing the last window really quits the app (like ⌘Q, so apps that restore their tabs do), with exceptions for apps you want to keep running. |
 | **Finder** | Return opens, F2 renames, Delete moves to the Trash, ⌫ goes back (on the desktop it moves to the Trash too), Ctrl+X/Ctrl+V moves files. Visible extensions, folders first, folder sizes and more in one click (always reversible). |
-| **File Explorer** | A Windows-style file manager: address bar, columns with extension and size, previews, tabs. |
 | **Keyboard** | Ctrl+C/V/X/Z/A/S… like on a PC, Ctrl+arrows and Ctrl+⌫ by word, Home/End, right ⌘ as AltGr (@, #, €, [ ]), ⌥⇧S for a screen snip like Win+Shift+S (the screen freezes), accented capitals (È, À, Ò…) with Caps Lock, Ctrl + wheel to zoom. Shortcuts can be recorded by pressing them, mouse buttons included. |
 | **Notifications** | Notifications that slide in at the top center, with the app's color and the duration and style you like. |
 | **Wallpaper** | Right-click an image in the Finder → *Set as Desktop Picture*. |
@@ -82,13 +81,12 @@ Toolbox/                 the main app (menu bar)
   Settings/              preferences (Settings.swift) and the settings window, one page per file
   Resources/             Info.plist, icon, it.lproj (Italian)
 Power/                   helper app: the power button in the Dock
-Explorer/                helper app: File Explorer (App, Model, Views)
 Shared/                  code used by more than one app: preference names, Power icon variants
 Artwork/                 original icon drawings
 scripts/                 build, release, icon generation
 ```
 
-Power and File Explorer are built as separate apps and placed inside `Toolbox.app/Contents/Helpers`, so they get their own Dock icon.
+Power is built as a separate app and placed inside `Toolbox.app/Contents/Helpers`, so it gets its own Dock icon.
 
 ### How it works
 
@@ -106,7 +104,7 @@ Adding a page only takes a new case in `SettingsSection` (`Settings/SettingsView
 
 ### Localization
 
-Source strings are English. SwiftUI literals (`Text("…")`, `Toggle("…")`, …) are localized automatically; strings typed as `String` use `String(localized:)`. The Italian translations live in `Toolbox/Resources/it.lproj/Localizable.strings` (plus the same file for Power and File Explorer). To add a language, add a `<code>.lproj` folder with the translated files and the code to `CFBundleLocalizations` in the Info.plist files and to `AppLanguage`.
+Source strings are English. SwiftUI literals (`Text("…")`, `Toggle("…")`, …) are localized automatically; strings typed as `String` use `String(localized:)`. The Italian translations live in `Toolbox/Resources/it.lproj/Localizable.strings` (plus the same file for Power). To add a language, add a `<code>.lproj` folder with the translated files and the code to `CFBundleLocalizations` in the Info.plist files and to `AppLanguage`.
 
 ### Signing and releasing
 
